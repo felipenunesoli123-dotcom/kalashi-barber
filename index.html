@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Kalashi Barber Shop | Loja Online</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Ícones FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
@@ -17,7 +15,6 @@
 </head>
 <body class="bg-white text-black font-sans antialiased selection:bg-black selection:text-white overflow-x-hidden pb-16">
 
-    <!-- BOTÕES FLUTUANTES REDES SOCIAIS -->
     <div class="fixed bottom-6 left-6 z-50 flex flex-col gap-3">
         <a href="https://www.instagram.com/kalashibarbershop?igsh=MXc3aXZtOHZpMjN5aQ==" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300">
             <i class="fab fa-instagram text-3xl"></i>
@@ -27,16 +24,13 @@
         </a>
     </div>
 
-    <!-- HEADER / NAV -->
     <header class="border-b border-gray-200 bg-white/90 backdrop-blur-md sticky top-0 z-40 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex justify-between items-center gap-4">
             
-            <!-- ÁREA DE AUTENTICAÇÃO (Topo Esquerdo) -->
             <div id="area-auth-topo" class="flex items-center gap-3 text-xs font-bold uppercase tracking-wider">
                 <span class="text-gray-400">Carregando...</span>
             </div>
 
-            <!-- LOGO CENTRAL -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0 cursor-pointer" onclick="window.location.reload();">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-full flex items-center justify-center p-0.5">
                     <svg viewBox="0 0 500 500" class="w-full h-full text-black" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +46,6 @@
                 </div>
             </div>
 
-            <!-- BOTÕES AUXILIARES -->
             <div class="flex items-center gap-4">
                 <button onclick="abrirRastreio()" class="text-xs uppercase tracking-widest font-bold text-gray-600 hover:text-black transition">Rastrear</button>
                 <a href="#produtos" class="bg-black text-white px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 transition shadow-sm">Loja</a>
@@ -61,7 +54,6 @@
         </div>
     </header>
 
-    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -105,7 +97,6 @@
         </div>
     </div>
 
-    <!-- CONTAINER PRINCIPAL DINÂMICO -->
     <div id="conteudo-principal">
         <section class="bg-gray-50 border-b border-gray-100 py-12 sm:py-16 text-center px-4 w-full">
             <div class="max-w-3xl mx-auto">
@@ -117,12 +108,10 @@
 
         <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
-                <!-- RENDERIZADO VIA JS -->
-            </div>
+                </div>
         </main>
     </div>
 
-    <!-- FOOTER -->
     <footer class="bg-white text-gray-400 text-xs py-8 text-center border-t border-gray-100 w-full px-4">
         <p class="uppercase tracking-widest font-bold text-[10px] text-black mb-2">&copy; 2026 Kalashi Barber Shop. Todos os direitos reservados.</p>
     </footer>
@@ -213,39 +202,43 @@
             const senha = document.getElementById('cad-senha').value;
             const endereco = document.getElementById('cad-endereco').value;
 
-            // Verificar se o email já existe em nuvem
-            const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
-            const respostaChecagem = await fetch(checarUrl, {
-                headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-            });
-            const dadosChecagem = await respostaChecagem.json();
+            try {
+                // Verificar se o email já existe em nuvem
+                const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
+                const respostaChecagem = await fetch(checarUrl, {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+                });
+                const dadosChecagem = await respostaChecagem.json();
 
-            if (dadosChecagem.length > 0) {
-                alert("Este e-mail já está cadastrado em nossa rede mundial.");
-                document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
-                return;
-            }
+                if (dadosChecagem.length > 0) {
+                    alert("Este e-mail já está cadastrado em nossa rede mundial.");
+                    document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
+                    return;
+                }
 
-            // Salvar no banco em nuvem definitivo
-            const respostaSalvar = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
-                method: "POST",
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": `Bearer ${SUPABASE_KEY}`,
-                    "Content-Type": "application/json",
-                    "Prefer": "return=representation"
-                },
-                body: JSON.stringify({ nome, email, senha, endereco })
-            });
+                // Salvar no banco em nuvem definitivo
+                const respostaSalvar = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Content-Type": "application/json",
+                        "Prefer": "return=representation"
+                    },
+                    body: JSON.stringify({ nome, email, senha, endereco })
+                });
 
-            if (respostaSalvar.ok) {
-                const novosDados = await respostaSalvar.json();
-                alert("Conta global criada com sucesso!");
-                salvarSessao(novosDados[0]);
-                fecharModalAuth();
-                if (produtoAtual) verProduto(produtoAtual.id);
-            } else {
-                alert("Erro ao conectar com o servidor central.");
+                if (respostaSalvar.ok) {
+                    const novosDados = await respostaSalvar.json();
+                    alert("Conta global criada com sucesso!");
+                    salvarSessao(novosDados[0]);
+                    fecharModalAuth();
+                    if (produtoAtual) verProduto(produtoAtual.id);
+                } else {
+                    alert("Erro ao conectar com o servidor central.");
+                }
+            } catch (err) {
+                alert("Erro crítico na comunicação com a nuvem.");
             }
             document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
         }
@@ -256,25 +249,29 @@
             const email = document.getElementById('login-email').value.toLowerCase().trim();
             const senha = document.getElementById('login-senha').value;
 
-            const urlBusca = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}`;
-            const resposta = await fetch(urlBusca, {
-                headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-            });
-            const dadosUsuario = await resposta.json();
+            try {
+                const urlBusca = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}`;
+                const resposta = await fetch(urlBusca, {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+                });
+                const dadosUsuario = await resposta.json();
 
-            if (dadosUsuario.length === 0) {
-                alert("E-mail ou senha inválidos em nossa rede.");
-                document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
-                return;
+                if (dadosUsuario.length === 0) {
+                    alert("E-mail ou senha inválidos em nossa rede.");
+                    document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
+                    return;
+                }
+
+                salvarSessao(dadosUsuario[0]);
+                fecharModalAuth();
+                if (produtoAtual) verProduto(produtoAtual.id);
+            } catch (err) {
+                alert("Erro ao conectar com o servidor de login.");
             }
-
-            salvarSessao(dadosUsuario[0]);
-            fecharModalAuth();
-            if (produtoAtual) verProduto(produtoAtual.id);
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
 
-        function executarLogout() {
+        function ejecutarLogout() {
             localStorage.removeItem('kalashi_global_session');
             usuarioLogado = null;
             window.location.reload();
@@ -282,6 +279,7 @@
 
         function renderizarVitrine() {
             const grid = document.querySelector('#produtos > div');
+            if(!grid) return;
             grid.innerHTML = '';
             Object.values(produtosDB).forEach(p => {
                 grid.innerHTML += `
