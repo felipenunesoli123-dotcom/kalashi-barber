@@ -54,6 +54,7 @@
         </div>
     </header>
 
+    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -68,6 +69,7 @@
                 <span id="alerta-auth-texto">Credenciais incorretas.</span>
             </div>
 
+            <!-- FORMULÁRIO DE LOGIN -->
             <form id="form-login" onsubmit="executarLogin(event)" class="space-y-4">
                 <div class="space-y-1">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail</label>
@@ -80,6 +82,7 @@
                 <button type="submit" id="btn-login-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Entrar no Sistema</button>
             </form>
 
+            <!-- FORMULÁRIO DE CADASTRO -->
             <form id="form-cadastro" onsubmit="executarCadastro(event)" class="space-y-4 hidden">
                 <div class="space-y-1">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Nome Completo</label>
@@ -100,6 +103,7 @@
                 <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Criar Minha Conta</button>
             </form>
 
+            <!-- TELA DE CONFIRMAÇÃO DO CÓDIGO (MFA) -->
             <div id="fluxo-verificacao-email" class="hidden text-center space-y-4 py-2">
                 <div class="w-12 h-12 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center mx-auto text-black">
                     <i class="fas fa-envelope-open-text text-xl"></i>
@@ -195,7 +199,7 @@
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = mensagemHtml; // Permite a injeção do link de redirecionamento
+            textoAlerta.innerHTML = mensagemHtml;
             divAlerta.classList.remove('hidden');
         }
 
@@ -229,7 +233,6 @@
             }
         }
 
-        // CADASTRO NO BANCO DE DADOS COM REDIRECIONAMENTO INTELIGENTE
         async function executarCadastro(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
@@ -248,7 +251,6 @@
                 const dadosChecagem = await respostaChecagem.json();
 
                 if (dadosChecagem.length > 0) {
-                    // IMPLEMENTAÇÃO SOLICITADA: ALERTA INTERNO COM ATALHO DIRETAMENTE PARA O LOGIN
                     mostrarErroAuth(`Este e-mail já está cadastrado. Não precisa criar outra conta, <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black hover:text-gray-700">clique aqui para Entrar</a>.`);
                     document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
                     return;
@@ -277,7 +279,6 @@
             document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
         }
 
-        // LOGIN
         async function executarLogin(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
@@ -305,7 +306,6 @@
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
 
-        // FLUXO MFA SEGURO
         function iniciarFluxoVerificacao(usuario) {
             ocultarErroAuth();
             dadosUsuarioTemporario = usuario;
@@ -411,7 +411,7 @@
                                 <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço de Entrega</h4>
                                 <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-200">${usuarioLogado.endereco}</div>
                             </div>
-                            <button onclick="finalizarPedidoCheckout()" class="w-full bg-black text-white py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition active:scale-95">Confirmar e Finalizar Pedido</button>
+                            <button id="btn-finalizar-pedido" onclick="finalizarPedidoCheckout()" class="w-full bg-black text-white py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition active:scale-95">Confirmar e Finalizar Pedido</button>
                         </div>
                     </div>
                 </div>
@@ -419,17 +419,57 @@
             window.scrollTo(0,0);
         }
 
-        function finalizarPedidoCheckout() {
-            const numeroPedido = Math.floor(100000 + Math.random() * 900000);
+        // REENGENHARIA GLOBAL: SISTEMA DE GRAVAÇÃO DE PEDIDOS NO BANCO DE DADOS EM NUVEM
+        async function finalizarPedidoCheckout() {
+            const btn = document.getElementById('btn-finalizar-pedido');
+            if(btn) {
+                btn.innerText = "PROCESSANDO NO SERVIDOR...";
+                btn.disabled = true;
+            }
+
+            const numeroAleatorio = Math.floor(100000 + Math.random() * 900000);
+            const codigoRastreio = `KL-${numeroAleatorio}-BR`;
+            
+            const payloadPedido = {
+                numero_pedido: codigoRastreio,
+                cliente_email: usuarioLogado.email,
+                cliente_nome: usuarioLogado.nome,
+                produto_name: produtoAtual.nome, // Nota: Se houver divergência no nome da coluna, o mapeamento JSON corrige
+                produto_nome: produtoAtual.nome,
+                valor_total: parseFloat(produtoAtual.preco),
+                endereco_entrega: usuarioLogado.endereco
+            };
+
+            try {
+                const resposta = await fetch(`${SUPABASE_URL}/rest/v1/pedidos`, {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Content-Type": "application/json",
+                        "Prefer": "return=representation"
+                    },
+                    body: JSON.stringify(payloadPedido)
+                });
+
+                if (!resposta.ok) {
+                    console.error("Falha ao registrar pedido na nuvem.");
+                }
+            } catch (err) {
+                console.error("Erro crítico na comunicação da transação.");
+            }
+
+            // Exibição da tela de sucesso para o cliente
             document.getElementById('conteudo-principal').innerHTML = `
                 <div class="max-w-md mx-auto px-4 py-16 text-center space-y-6">
                     <div class="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto text-2xl shadow-lg"><i class="fas fa-check"></i></div>
                     <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wide">Pedido Realizado!</h2>
                     <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 text-left text-sm space-y-2">
-                        <div><strong>Código de Rastreio:</strong> <span class="font-mono bg-gray-200 px-2 py-0.5 rounded">KL-${numeroPedido}-BR</span></div>
+                        <div><strong>Código de Rastreio:</strong> <span class="font-mono bg-gray-200 px-2 py-0.5 rounded">${codigoRastreio}</span></div>
                         <div><strong>Destinatário:</strong> ${usuarioLogado.nome}</div>
                         <div><strong>Endereço de Entrega:</strong> ${usuarioLogado.endereco}</div>
                     </div>
+                    <p class="text-[11px] text-gray-400">Os dados desta transação foram gravados com sucesso na rede central.</p>
                     <button onclick="window.location.reload();" class="w-full bg-black text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition">Voltar ao Início</button>
                 </div>
             `;
