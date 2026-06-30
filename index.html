@@ -192,10 +192,10 @@
             }
         }
 
-        function mostrarErroAuth(mensagem) {
+        function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerText = mensaje;
+            textoAlerta.innerHTML = mensagemHtml; // Permite a injeção do link de redirecionamento
             divAlerta.classList.remove('hidden');
         }
 
@@ -229,7 +229,7 @@
             }
         }
 
-        // CADASTRO NO BANCO DE DADOS
+        // CADASTRO NO BANCO DE DADOS COM REDIRECIONAMENTO INTELIGENTE
         async function executarCadastro(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
@@ -248,7 +248,8 @@
                 const dadosChecagem = await respostaChecagem.json();
 
                 if (dadosChecagem.length > 0) {
-                    mostrarErroAuth("Este endereço de e-mail já possui um cadastro ativo.");
+                    // IMPLEMENTAÇÃO SOLICITADA: ALERTA INTERNO COM ATALHO DIRETAMENTE PARA O LOGIN
+                    mostrarErroAuth(`Este e-mail já está cadastrado. Não precisa criar outra conta, <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black hover:text-gray-700">clique aqui para Entrar</a>.`);
                     document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
                     return;
                 }
@@ -304,7 +305,7 @@
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
 
-        // NOVO FLUXO MFA SEGURO
+        // FLUXO MFA SEGURO
         function iniciarFluxoVerificacao(usuario) {
             ocultarErroAuth();
             dadosUsuarioTemporario = usuario;
