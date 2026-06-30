@@ -58,9 +58,14 @@
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
             
-            <div class="flex border-b border-gray-200 mb-6 text-sm font-bold uppercase tracking-wider">
+            <div id="abas-auth" class="flex border-b border-gray-200 mb-6 text-sm font-bold uppercase tracking-wider">
                 <button id="btn-aba-login" onclick="mudarAbaAuth('login')" class="flex-1 pb-3 text-black border-b-2 border-black">Entrar</button>
                 <button id="btn-aba-cadastro" onclick="mudarAbaAuth('cadastro')" class="flex-1 pb-3 text-gray-400 border-b-2 border-transparent">Criar Conta</button>
+            </div>
+
+            <div id="alerta-auth" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2 animate-pulse">
+                <i class="fas fa-exclamation-circle text-sm shrink-0"></i>
+                <span id="alerta-auth-texto">Credenciais incorretas.</span>
             </div>
 
             <form id="form-login" onsubmit="executarLogin(event)" class="space-y-4">
@@ -94,6 +99,23 @@
                 </div>
                 <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Criar Minha Conta</button>
             </form>
+
+            <div id="fluxo-verificacao-email" class="hidden text-center space-y-4 py-2">
+                <div class="w-12 h-12 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center mx-auto text-black">
+                    <i class="fas fa-envelope-open-text text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold font-serif-kalashi uppercase">Verifique seu E-mail</h3>
+                    <p class="text-xs text-gray-500 mt-1">Enviamos um código de confirmação de 6 dígitos para o endereço informado.</p>
+                </div>
+                <div class="space-y-1 text-left">
+                    <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500 block text-center">Inserir Código de 6 Dígitos</label>
+                    <input type="text" id="codigo-mfa-input" maxlength="6" placeholder="000000" class="w-full text-center tracking-[0.5em] font-mono border border-gray-300 rounded-xl px-4 py-3 text-lg outline-none focus:border-black">
+                </div>
+                <button onclick="validarCodigoVerificacao()" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl hover:bg-gray-800 transition">Confirmar Código</button>
+                <button onclick="cancelarVerificacao()" class="text-xs text-gray-400 hover:text-black transition block mx-auto pt-2">Voltar</button>
+            </div>
+
         </div>
     </div>
 
@@ -107,8 +129,7 @@
         </section>
 
         <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
-                </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8"></div>
         </main>
     </div>
 
@@ -117,7 +138,6 @@
     </footer>
 
     <script>
-        // CONFIGURAÇÃO DE CREDENCIAIS GLOBAIS DO BANCO DE DADOS SUPABASE
         const SUPABASE_URL = "https://trvrjqkowacninpqdiii.supabase.co";
         const SUPABASE_KEY = "sb_publishable_hCjMw5KmZgAI65lyVGSPhg_7RDXmi8X";
 
@@ -130,8 +150,11 @@
 
         let usuarioLogado = null;
         let produtoAtual = null;
+        
+        // VARIÁVEIS DE CONTROLE DA VERIFICAÇÃO POR CÓDIGO
+        let codigoGeradoMFA = null;
+        let dadosUsuarioTemporario = null;
 
-        // VERIFICAÇÃO DE SESSÃO GLOBAL DE 30 DIAS NO DISPOSITIVO
         function checarSessao() {
             const sessao = localStorage.getItem('kalashi_global_session');
             if (sessao) {
@@ -171,14 +194,30 @@
             }
         }
 
+        function mostrarErroAuth(mensagem) {
+            const divAlerta = document.getElementById('alerta-auth');
+            const textoAlerta = document.getElementById('alerta-auth-texto');
+            textoAlerta.innerText = mensagem;
+            divAlerta.classList.remove('hidden');
+        }
+
+        function ocultarErroAuth() {
+            document.getElementById('alerta-auth').classList.add('hidden');
+        }
+
         function abrirModalAuth(aba = 'login') {
             document.getElementById('modal-auth').classList.remove('hidden');
+            cancelarVerificacao();
             mudarAbaAuth(aba);
         }
+
         function fecharModalAuth() {
             document.getElementById('modal-auth').classList.add('hidden');
+            ocultarErroAuth();
         }
+
         function mudarAbaAuth(aba) {
+            ocultarErroAuth();
             if (aba === 'login') {
                 document.getElementById('form-login').classList.remove('hidden');
                 document.getElementById('form-cadastro').classList.add('hidden');
@@ -192,9 +231,10 @@
             }
         }
 
-        // COMUNICAÇÃO HTTP COM A API DO SUPABASE (GRAVAÇÃO GLOBAL EM NUVEM)
-        async function executarCadastro(e) {
+        // CADASTRO NO BANCO DE DADOS
+        async function ejecutarCadastro(e) {
             e.preventDefault();
+            ocultarErroAuth();
             document.getElementById('btn-cad-submit').innerText = "Processando...";
             
             const nome = document.getElementById('cad-nome').value;
@@ -203,7 +243,6 @@
             const endereco = document.getElementById('cad-endereco').value;
 
             try {
-                // Verificar se o email já existe em nuvem
                 const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
                 const respostaChecagem = await fetch(checarUrl, {
                     headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
@@ -211,12 +250,11 @@
                 const dadosChecagem = await respostaChecagem.json();
 
                 if (dadosChecagem.length > 0) {
-                    alert("Este e-mail já está cadastrado em nossa rede mundial.");
+                    mostrarErroAuth("Este endereço de e-mail já possui um cadastro ativo.");
                     document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
                     return;
                 }
 
-                // Salvar no banco em nuvem definitivo
                 const respostaSalvar = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
                     method: "POST",
                     headers: {
@@ -230,21 +268,21 @@
 
                 if (respostaSalvar.ok) {
                     const novosDados = await respostaSalvar.json();
-                    alert("Conta global criada com sucesso!");
-                    salvarSessao(novosDados[0]);
-                    fecharModalAuth();
-                    if (produtoAtual) verProduto(produtoAtual.id);
+                    // Após criar a conta, exige a validação por código por segurança extra
+                    iniciarFluxoVerificacao(novosDados[0]);
                 } else {
-                    alert("Erro ao conectar com o servidor central.");
+                    mostrarErroAuth("Falha de resposta do servidor central da nuvem.");
                 }
             } catch (err) {
-                alert("Erro crítico na comunicação com a nuvem.");
+                mostrarErroAuth("Erro crítico ao tentar conectar com a base de dados.");
             }
             document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
         }
 
+        // LOGIN COM VERIFICAÇÃO EM NUVEM E DISPARO DE SEGUNDO FATOR (MFA)
         async function executarLogin(e) {
             e.preventDefault();
+            ocultarErroAuth();
             document.getElementById('btn-login-submit').innerText = "Autenticando...";
             const email = document.getElementById('login-email').value.toLowerCase().trim();
             const senha = document.getElementById('login-senha').value;
@@ -257,18 +295,63 @@
                 const dadosUsuario = await resposta.json();
 
                 if (dadosUsuario.length === 0) {
-                    alert("E-mail ou senha inválidos em nossa rede.");
+                    // FEEDBACK VISUAL DIRETAMENTE NO SITE
+                    mostrarErroAuth("E-mail ou senha digitados estão incorretos.");
                     document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
                     return;
                 }
 
-                salvarSessao(dadosUsuario[0]);
-                fecharModalAuth();
-                if (produtoAtual) verProduto(produtoAtual.id);
+                // Credenciais válidas! Agora dispara o código de autenticação por e-mail
+                iniciarFluxoVerificacao(dadosUsuario[0]);
             } catch (err) {
-                alert("Erro ao conectar com o servidor de login.");
+                mostrarErroAuth("Servidor inacessível no momento. Tente novamente.");
             }
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
+        }
+
+        // MECANISMO DE GERENCIAMENTO DO CÓDIGO DE CONFIRMAÇÃO
+        function iniciarFluxoVerificacao(usuario) {
+            ocultarErroAuth();
+            dadosUsuarioTemporario = usuario;
+            
+            // Geração de código de 6 dígitos aleatórios
+            codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Simulação de entrega na caixa de entrada (Exibe no console e em alerta)
+            console.log(`[KALASHI SECURITY] Código de confirmação enviado para ${usuario.email}: ${codigoGeradoMFA}`);
+            alert(`[SIMULAÇÃO DE E-MAIL]\n\nPara: ${usuario.email}\nAssunto: Seu código de confirmação Kalashi Barber Shop\n\nCódigo: ${codigoGeradoMFA}`);
+
+            // Transição de telas no modal
+            document.getElementById('form-login').classList.add('hidden');
+            document.getElementById('form-cadastro').classList.add('hidden');
+            document.getElementById('abas-auth').classList.add('hidden');
+            document.getElementById('fluxo-verificacao-email').classList.remove('hidden');
+            document.getElementById('codigo-mfa-input').value = "";
+            document.getElementById('codigo-mfa-input').focus();
+        }
+
+        function validarCodigoVerificacao() {
+            ocultarErroAuth();
+            const codigoDigitado = document.getElementById('codigo-mfa-input').value.trim();
+
+            if (codigoDigitado === codigoGeradoMFA) {
+                // Código correto! Libera o acesso definitivo do usuário
+                salvarSessao(dadosUsuarioTemporario);
+                fecharModalAuth();
+                alert(`Autenticação concluída! Seja bem-vindo, ${usuarioLogado.nome}.`);
+                if (produtoAtual) verProduto(produtoAtual.id);
+            } else {
+                // FEEDBACK DE CÓDIGO INCORRETO
+                mostrarErroAuth("Código de confirmação incorreto ou expirado.");
+            }
+        }
+
+        function cancelarVerificacao() {
+            codigoGeradoMFA = null;
+            dadosUsuarioTemporario = null;
+            document.getElementById('abas-auth').classList.remove('hidden');
+            document.getElementById('fluxo-verificacao-email').classList.add('hidden');
+            mudarAbaAuth('login');
         }
 
         function executarLogout() {
@@ -303,7 +386,7 @@
         function tentarVerProduto(id) {
             produtoAtual = produtosDB[id];
             if (!usuarioLogado) {
-                alert("Para realizar compras e puxar seus dados de entrega salvos na nuvem, conecte-se ou cadastre-se agora.");
+                alert("Para realizar compras e recuperar seus dados de entrega, conecte-se ou cadastre-se agora.");
                 abrirModalAuth('cadastro');
                 return;
             }
@@ -334,7 +417,7 @@
                                 <div class="text-xs text-gray-600 mt-2 border-t border-gray-200 pt-2">Ou até ${produtoAtual.parcelasMax}x de R$ ${valorParcela} sem juros</div>
                             </div>
                             <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
-                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço Global de Entrega Recuperado</h4>
+                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço de Entrega</h4>
                                 <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-200">${usuarioLogado.endereco}</div>
                             </div>
                             <button onclick="finalizarPedidoCheckout()" class="w-full bg-black text-white py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition active:scale-95">Confirmar e Finalizar Pedido</button>
