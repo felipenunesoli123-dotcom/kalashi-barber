@@ -119,7 +119,7 @@
     <script>
         // CONFIGURAÇÃO DE CREDENCIAIS GLOBAIS DO BANCO DE DADOS SUPABASE
         const SUPABASE_URL = "https://trvrjqkowacninpqdiii.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydnJqcWtvd2FjbmlucHFkaWlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTAwNjksImV4cCI6MjA2NjI2NjA2OX0.xP43b18S97148LgB_w87_o1LqHh9187_v1LqHh9187_v";
+        const SUPABASE_KEY = "sb_publishable_hCjMw5KmZgAI65lyVGSPhg_7RDXmi8X";
 
         const produtosDB = {
             1: { id: 1, categoria: "Equipamentos", nome: "Máquina de Cortar Cabelo Profissional", preco: 249.90, descontoVista: 10, parcelasMax: 6, icone: "fa-scissors", desc: "A Máquina de Cortar Cabelo Profissional Kalashi oferece o mais alto nível de precisão exigido por barbeiros de ponta." },
@@ -193,7 +193,7 @@
         }
 
         // COMUNICAÇÃO HTTP COM A API DO SUPABASE (GRAVAÇÃO GLOBAL EM NUVEM)
-        async function ejecutarCadastro(e) {
+        async function executarCadastro(e) {
             e.preventDefault();
             document.getElementById('btn-cad-submit').innerText = "Processando...";
             
