@@ -46,9 +46,13 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 sm:gap-4">
                 <button onclick="abrirRastreio()" class="text-xs uppercase tracking-widest font-bold text-gray-600 hover:text-black transition">Rastrear</button>
-                <a href="#produtos" class="bg-black text-white px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 transition shadow-sm">Loja</a>
+                
+                <button onclick="alternarCarrinho()" class="relative p-2 text-gray-700 hover:text-black transition">
+                    <i class="fas fa-shopping-bag text-lg"></i>
+                    <span id="carrinho-contador" class="absolute -top-1 -right-1 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
             </div>
             
         </div>
@@ -143,7 +147,7 @@
                         <span id="rastreio-status" class="bg-black text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">Processando</span>
                     </div>
                     <div class="border-t border-gray-200 my-2 pt-2">
-                        <p class="text-xs text-gray-400 uppercase font-bold">Produto</p>
+                        <p class="text-xs text-gray-400 uppercase font-bold">Produto(s)</p>
                         <p id="rastreio-produto" class="font-serif-kalashi font-bold text-gray-900 mt-0.5"></p>
                     </div>
                     <div>
@@ -164,21 +168,60 @@
         </div>
     </div>
 
-    <div id="conteudo-principal">
-        <section class="bg-gray-50 border-b border-gray-100 py-12 sm:py-16 text-center px-4 w-full">
-            <div class="max-w-3xl mx-auto">
-                <span class="inline-block text-[10px] uppercase tracking-widest bg-black text-white px-3 py-1 rounded-full font-bold shadow-sm">Produtos Profissionais & Premium</span>
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif-kalashi font-black mt-6 mb-4 tracking-tight uppercase leading-tight text-gray-900">Loja Online para Homens & Barbeiros</h1>
-                <p class="text-gray-600 text-sm max-w-xl mx-auto mb-8">Equipamentos de alta performance e cuidados pessoais com envio rápido para todo o Brasil.</p>
+    <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm shadow-inner" onclick="alternarCarrinho()"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100 transition-transform duration-300">
+            <div>
+                <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <h3 class="text-base font-serif-kalashi font-black uppercase tracking-wider text-gray-900"><i class="fas fa-shopping-bag mr-2"></i> Seu Carrinho</h3>
+                    <button onclick="alternarCarrinho()" class="text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="carrinho-itens-lista" class="mt-4 space-y-4 overflow-y-auto max-h-[60vh] pr-1 no-scrollbar">
+                    </div>
             </div>
-        </section>
 
-        <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8"></div>
-        </main>
+            <div class="border-t border-gray-100 pt-4 bg-white space-y-4">
+                <div class="flex justify-between items-center font-serif-kalashi font-black text-lg">
+                    <span>TOTAL:</span>
+                    <span id="carrinho-preco-total">R$ 0,00</span>
+                </div>
+                <button onclick="prosseguirParaCheckout()" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-4 rounded-xl hover:bg-gray-800 transition active:scale-95 block text-center">Fechar Pedido</button>
+            </div>
+        </div>
     </div>
 
-    <footer class="bg-white text-gray-400 text-xs py-8 text-center border-t border-gray-100 w-full px-4">
+    <div id="conteudo-principal">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+            <div class="flex border-b border-gray-200 text-xs font-bold uppercase tracking-widest">
+                <button id="tab-vitrine" onclick="mudarPainelPrincipal('vitrine')" class="pb-3 text-black border-b-2 border-black mr-6">Vitrine de Produtos</button>
+                <button id="tab-pedidos" onclick="mudarPainelPrincipal('pedidos')" class="pb-3 text-gray-400 border-b-2 border-transparent">Meus Pedidos</button>
+            </div>
+        </div>
+
+        <div id="painel-vitrine">
+            <section class="bg-gray-50 border-b border-gray-100 py-12 sm:py-16 text-center px-4 w-full mt-4">
+                <div class="max-w-3xl mx-auto">
+                    <span class="inline-block text-[10px] uppercase tracking-widest bg-black text-white px-3 py-1 rounded-full font-bold shadow-sm">Produtos Profissionais & Premium</span>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif-kalashi font-black mt-6 mb-4 tracking-tight uppercase leading-tight text-gray-900">Loja Online para Homens & Barbeiros</h1>
+                    <p class="text-gray-600 text-sm max-w-xl mx-auto mb-8">Equipamentos de alta performance e cuidados pessoais com envio rápido para todo o Brasil.</p>
+                </div>
+            </section>
+
+            <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8"></div>
+            </main>
+        </div>
+
+        <div id="painel-pedidos" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+            <h2 class="text-xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Histórico de Compras</h2>
+            <div id="lista-pedidos-usuario" class="space-y-4">
+                </div>
+        </div>
+
+    </div>
+
+    <footer class="bg-white text-gray-400 text-xs py-8 text-center border-t border-gray-100 w-full px-4 mt-12">
         <p class="uppercase tracking-widest font-bold text-[10px] text-black mb-2">&copy; 2026 Kalashi Barber Shop. Todos os direitos reservados.</p>
     </footer>
 
@@ -187,14 +230,14 @@
         const SUPABASE_KEY = "sb_publishable_hCjMw5KmZgAI65lyVGSPhg_7RDXmi8X";
 
         const produtosDB = {
-            1: { id: 1, categoria: "Equipamentos", nome: "Máquina de Cortar Cabelo Profissional", preco: 249.90, descontoVista: 10, parcelasMax: 6, icone: "fa-scissors", desc: "A Máquina de Cortar Cabelo Profissional Kalashi oferece o mais alto nível de precisão exigido por barbeiros de ponta." },
-            2: { id: 2, categoria: "Estilo", nome: "Pomada Modeladora Efeito Matte", preco: 45.00, descontoVista: 5, parcelasMax: 3, icone: "fa-jar", desc: "Desenvolvida com exclusividade para a linha Kalashi, nossa pomada modeladora de efeito matte confere alta fixação." },
-            3: { id: 3, categoria: "Cuidados", nome: "Shampoo Premium Barba & Cabelo", preco: 39.90, descontoVista: 5, parcelasMax: 3, icone: "fa-soap", desc: "Fórmula revigorante enriquecida com extratos naturais e óleo de menta." },
-            4: { id: 4, categoria: "Equipamentos", nome: "Tesoura Fio Laser Profissional", preco: 120.00, descontoVista: 10, parcelasMax: 4, icone: "fa-cut", desc: "A ferramenta indispensável para acabamentos geométricos e cortes retos perfeitos." }
+            1: { id: 1, categoria: "Equipamentos", nome: "Máquina de Cortar Cabelo Profissional", preco: 249.90, icone: "fa-scissors" },
+            2: { id: 2, categoria: "Estilo", nome: "Pomada Modeladora Efeito Matte", preco: 45.00, icone: "fa-jar" },
+            3: { id: 3, categoria: "Cuidados", nome: "Shampoo Premium Barba & Cabelo", preco: 39.90, icone: "fa-soap" },
+            4: { id: 4, categoria: "Equipamentos", nome: "Tesoura Fio Laser Profissional", preco: 120.00, icone: "fa-cut" }
         };
 
         let usuarioLogado = null;
-        let produtoAtual = null;
+        let carrinho = [];
         let codigoGeradoMFA = null;
         let dadosUsuarioTemporario = null;
 
@@ -209,6 +252,7 @@
                 }
             }
             renderizarComponentesAuth();
+            carregarCarrinhoLocal();
         }
 
         function salvarSessao(usuario) {
@@ -219,6 +263,9 @@
             }));
             usuarioLogado = usuario;
             renderizarComponentesAuth();
+            if(!document.getElementById('painel-pedidos').classList.contains('hidden')) {
+                carregarHistoricoPedidos();
+            }
         }
 
         function renderizarComponentesAuth() {
@@ -234,6 +281,21 @@
                     <span class="text-gray-300">|</span>
                     <button onclick="abrirModalAuth('cadastro')" class="text-gray-600 hover:text-black">Criar Conta</button>
                 `;
+            }
+        }
+
+        function mudarPainelPrincipal(painel) {
+            if (painel === 'vitrine') {
+                document.getElementById('painel-vitrine').classList.remove('hidden');
+                document.getElementById('painel-pedidos').classList.add('hidden');
+                document.getElementById('tab-vitrine').className = "pb-3 text-black border-b-2 border-black mr-6";
+                document.getElementById('tab-pedidos').className = "pb-3 text-gray-400 border-b-2 border-transparent";
+            } else {
+                document.getElementById('painel-vitrine').classList.add('hidden');
+                document.getElementById('painel-pedidos').classList.remove('hidden');
+                document.getElementById('tab-vitrine').className = "pb-3 text-gray-400 border-b-2 border-transparent mr-6";
+                document.getElementById('tab-pedidos').className = "pb-3 text-black border-b-2 border-black";
+                carregarHistoricoPedidos();
             }
         }
 
@@ -292,7 +354,7 @@
                 const dadosChecagem = await respostaChecagem.json();
 
                 if (dadosChecagem.length > 0) {
-                    mostrarErroAuth(`Este e-mail já está cadastrado. Não precisa criar outra conta, <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black hover:text-gray-700">clique aqui para Entrar</a>.`);
+                    mostrarErroAuth(`Este e-mail já está cadastrado. <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black hover:text-gray-700">Entrar</a>.`);
                     document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
                     return;
                 }
@@ -312,10 +374,10 @@
                     const novosDados = await respostaSalvar.json();
                     iniciarFluxoVerificacao(novosDados[0]);
                 } else {
-                    mostrarErroAuth("Falha de resposta do servidor central da nuvem.");
+                    mostrarErroAuth("Falha de resposta do servidor.");
                 }
             } catch (err) {
-                mostrarErroAuth("Erro crítico ao tentar conectar com a base de dados.");
+                mostrarErroAuth("Erro de conexão.");
             }
             document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
         }
@@ -335,14 +397,14 @@
                 const dadosUsuario = await resposta.json();
 
                 if (dadosUsuario.length === 0) {
-                    mostrarErroAuth("E-mail ou senha digitados estão incorretos.");
+                    mostrarErroAuth("E-mail ou senha incorretos.");
                     document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
                     return;
                 }
 
                 iniciarFluxoVerificacao(dadosUsuario[0]);
             } catch (err) {
-                mostrarErroAuth("Servidor inacessível no momento. Tente novamente.");
+                mostrarErroAuth("Servidor inacessível.");
             }
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
@@ -350,11 +412,9 @@
         function iniciarFluxoVerificacao(usuario) {
             ocultarErroAuth();
             dadosUsuarioTemporario = usuario;
-            
             codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
-            
-            console.log(`[KALASHI SECURITY] Código para ${usuario.email}: ${codigoGeradoMFA}`);
-            alert(`[CÓDIGO DE VERIFICAÇÃO ENVIADO]\n\nEnviamos um código de confirmação para o seu e-mail: ${usuario.email}\n\nCódigo: ${codigoGeradoMFA}`);
+            console.log(`[KALASHI SECURITY] Código: ${codigoGeradoMFA}`);
+            alert(`[CÓDIGO DE VERIFICAÇÃO]\n\nCódigo: ${codigoGeradoMFA}`);
 
             document.getElementById('form-login').classList.add('hidden');
             document.getElementById('form-cadastro').classList.add('hidden');
@@ -371,10 +431,9 @@
             if (codigoDigitado === codigoGeradoMFA) {
                 salvarSessao(dadosUsuarioTemporario);
                 fecharModalAuth();
-                alert(`Autenticação concluída com sucesso! Seja bem-vindo.`);
-                if (produtoAtual) verProduto(produtoAtual.id);
+                alert(`Conectado com sucesso!`);
             } else {
-                mostrarErroAuth("Código de confirmação incorreto ou expirado.");
+                mostrarErroAuth("Código incorreto.");
             }
         }
 
@@ -399,7 +458,7 @@
             Object.values(produtosDB).forEach(p => {
                 grid.innerHTML += `
                     <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                        <div class="bg-gray-50 h-48 rounded-xl flex items-center justify-center mb-4 cursor-pointer" onclick="tentarVerProduto(${p.id})">
+                        <div class="bg-gray-50 h-48 rounded-xl flex items-center justify-center mb-4">
                             <i class="fas ${p.icone} text-5xl text-gray-400"></i>
                         </div>
                         <div>
@@ -408,75 +467,195 @@
                         </div>
                         <div class="mt-4">
                             <div class="text-xl font-black font-serif-kalashi mb-3">R$ ${p.preco.toFixed(2)}</div>
-                            <button onclick="tentarVerProduto(${p.id})" class="w-full bg-black text-white text-center py-3 rounded-xl text-xs uppercase tracking-widest font-bold block transition active:scale-95">Comprar</button>
+                            <button onclick="adicionarAoCarrinho(${p.id})" class="w-full bg-black text-white text-center py-3 rounded-xl text-xs uppercase tracking-widest font-bold block transition active:scale-95 hover:bg-gray-800">Adicionar ao Carrinho</button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function tentarVerProduto(id) {
-            produtoAtual = produtosDB[id];
-            if (!usuarioLogado) {
-                alert("Para realizar compras e recuperar seus dados de entrega, conecte-se ou cadastre-se agora.");
-                abrirModalAuth('cadastro');
-                return;
-            }
-            verProduto(id);
+        /* GERENCIAMENTO DO CARRINHO DE COMPRAS */
+        function alternarCarrinho() {
+            const drawer = document.getElementById('drawer-carrinho');
+            drawer.classList.toggle('hidden');
+            renderizarCarrinhoDrawer();
         }
 
-        function verProduto(id) {
-            const precoAVista = (produtoAtual.preco * (1 - produtoAtual.descontoVista/100)).toFixed(2);
-            const valorParcela = (produtoAtual.preco / produtoAtual.parcelasMax).toFixed(2);
+        function adicionarAoCarrinho(id) {
+            const prod = produtosDB[id];
+            const itemExistente = carrinho.find(item => item.id === id);
+
+            if(itemExistente) {
+                itemExistente.quantidade += 1;
+            } else {
+                carrinho.push({ ...prod, quantidade: 1 });
+            }
+
+            atualizarContadorCarrinho();
+            salvarCarrinhoLocal();
+            
+            // Efeito visual rápido de feedback
+            alert(`"${prod.nome}" foi adicionado ao seu carrinho.`);
+        }
+
+        function alterarQuantidadeCarrinho(id, delta) {
+            const item = carrinho.find(item => item.id === id);
+            if(!item) return;
+
+            item.quantidade += delta;
+            if(item.quantidade <= 0) {
+                carrinho = carrinho.filter(item => item.id !== id);
+            }
+            
+            atualizarContadorCarrinho();
+            salvarCarrinhoLocal();
+            renderizarCarrinhoDrawer();
+        }
+
+        function atualizarContadorCarrinho() {
+            const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+            const badge = document.getElementById('carrinho-contador');
+            
+            if(totalItens > 0) {
+                badge.innerText = totalItens;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function salvarCarrinhoLocal() {
+            localStorage.setItem('kalashi_carrinho', JSON.stringify(carrinho));
+        }
+
+        function carregarCarrinhoLocal() {
+            const local = localStorage.getItem('kalashi_carrinho');
+            if(local) {
+                carrinho = JSON.parse(local);
+                atualizarContadorCarrinho();
+            }
+        }
+
+        function renderizarCarrinhoDrawer() {
+            const container = document.getElementById('carrinho-itens-lista');
+            const txtTotal = document.getElementById('carrinho-preco-total');
+            
+            if(carrinho.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400 text-xs uppercase tracking-wider">
+                        <i class="fas fa-shopping-basket text-3xl mb-3 block"></i>Carrinho Vazio
+                    </div>
+                `;
+                txtTotal.innerText = "R$ 0,00";
+                return;
+            }
+
+            container.innerHTML = "";
+            let subtotal = 0;
+
+            carrinho.forEach(item => {
+                const totalItem = item.preco * item.quantidade;
+                subtotal += totalItem;
+
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b border-gray-50 pb-3 gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gray-50 border rounded-xl flex items-center justify-center text-gray-400">
+                                <i class="fas ${item.icone}"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-900 leading-tight">${item.nome}</h4>
+                                <span class="text-[11px] text-gray-400">R$ ${item.preco.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50">
+                                <button onclick="alterarQuantidadeCarrinho(${item.id}, -1)" class="px-2 py-1 text-xs hover:bg-gray-200 rounded-l-lg">-</button>
+                                <span class="px-2 text-xs font-bold text-gray-800">${item.quantidade}</span>
+                                <button onclick="alterarQuantidadeCarrinho(${item.id}, 1)" class="px-2 py-1 text-xs hover:bg-gray-200 rounded-r-lg">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            txtTotal.innerText = `R$ ${subtotal.toFixed(2)}`;
+        }
+
+        function prosseguirParaCheckout() {
+            if(carrinho.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+            if(!usuarioLogado) {
+                alert("Para concluir o pedido, realize login ou crie uma conta.");
+                alternarCarrinho();
+                abrirModalAuth('login');
+                return;
+            }
+
+            alternarCarrinho();
+            renderizarTelaCheckout();
+        }
+
+        function renderizarTelaCheckout() {
+            let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+            let descricaoProdutos = carrinho.map(item => `${item.quantidade}x ${item.nome}`).join(', ');
 
             document.getElementById('conteudo-principal').innerHTML = `
-                <div class="max-w-7xl mx-auto px-4 py-8 w-full">
+                <div class="max-w-3xl mx-auto px-4 py-12 w-full">
                     <button onclick="window.location.reload();" class="mb-6 flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black transition">
-                        <i class="fas fa-arrow-left"></i> Voltar
+                        <i class="fas fa-arrow-left"></i> Cancelar e Voltar
                     </button>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div class="bg-gray-50 border border-gray-200 rounded-3xl h-72 sm:h-96 flex flex-col items-center justify-center p-6 text-center">
-                            <i class="fas ${produtoAtual.icone} text-7xl text-black mb-4"></i>
-                        </div>
-                        <div class="space-y-6">
-                            <div>
-                                <span class="text-xs uppercase tracking-widest bg-black text-white px-3 py-1 rounded-full font-bold">${produtoAtual.categoria}</span>
-                                <h1 class="text-2xl sm:text-3xl font-serif-kalashi font-black text-gray-900 mt-3">${produtoAtual.nome}</h1>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                <div class="text-3xl font-black font-serif-kalashi text-black">R$ ${produtoAtual.preco.toFixed(2)}</div>
-                                <div class="text-sm font-bold text-green-600 mt-1">R$ ${precoAVista} à vista com desconto no PIX</div>
-                                <div class="text-xs text-gray-600 mt-2 border-t border-gray-200 pt-2">Ou até ${produtoAtual.parcelasMax}x de R$ ${valorParcela} sem juros</div>
-                            </div>
-                            <div class="border border-gray-200 rounded-2xl p-4 space-y-3">
-                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço de Entrega</h4>
+                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="md:col-span-2 space-y-6">
+                            <div class="border border-gray-200 rounded-2xl p-5 space-y-3">
+                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço de Destino</h4>
                                 <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-200">${usuarioLogado.endereco}</div>
                             </div>
-                            <button id="btn-finalizar-pedido" onclick="finalizarPedidoCheckout()" class="w-full bg-black text-white py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition active:scale-95">Confirmar e Finalizar Pedido</button>
+
+                            <div class="border border-gray-200 rounded-2xl p-5">
+                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700 mb-3"><i class="fas fa-list-ol mr-1"></i> Resumo dos Itens</h4>
+                                <div class="space-y-2 text-xs text-gray-600">
+                                    ${carrinho.map(item => `
+                                        <div class="flex justify-between border-b border-gray-50 pb-1">
+                                            <span>${item.quantidade}x ${item.nome}</span>
+                                            <span class="font-bold text-gray-900">R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 h-fit space-y-4">
+                            <div class="text-sm font-bold text-gray-500 uppercase">Total Geral</div>
+                            <div class="text-3xl font-black font-serif-kalashi text-black">R$ ${subtotal.toFixed(2)}</div>
+                            <button id="btn-finalizar-pedido" onclick="executarCompraCarrinhoNuvem()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition active:scale-95 hover:bg-gray-800">Fechar Pedido</button>
                         </div>
                     </div>
                 </div>
             `;
-            window.scrollTo(0,0);
         }
 
-        async function finalizarPedidoCheckout() {
+        async function executarCompraCarrinhoNuvem() {
             const btn = document.getElementById('btn-finalizar-pedido');
-            if(btn) {
-                btn.innerText = "PROCESSANDO NO SERVIDOR...";
-                btn.disabled = true;
-            }
+            if(btn) { btn.innerText = "GRAVANDO PEDIDO..."; btn.disabled = true; }
 
             const numeroAleatorio = Math.floor(100000 + Math.random() * 900000);
             const codigoRastreio = `KL-${numeroAleatorio}-BR`;
-            
+            let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+            let nomesProdutos = carrinho.map(item => `${item.quantidade}x ${item.nome}`).join(' | ');
+
             const payloadPedido = {
                 numero_pedido: codigoRastreio,
                 cliente_email: usuarioLogado.email,
                 cliente_nome: usuarioLogado.nome,
-                produto_nome: produtoAtual.nome,
-                valor_total: parseFloat(produtoAtual.preco),
-                endereco_entrega: usuarioLogado.endereco
+                produto_nome: nomesProdutos,
+                valor_total: parseFloat(subtotal),
+                endereco_entrega: usuarioLogado.endereco,
+                status: "Processando"
             };
 
             try {
@@ -489,26 +668,89 @@
                     },
                     body: JSON.stringify(payloadPedido)
                 });
-            } catch (err) {
-                console.error("Falha na gravação.");
-            }
 
-            document.getElementById('conteudo-principal').innerHTML = `
-                <div class="max-w-md mx-auto px-4 py-16 text-center space-y-6">
-                    <div class="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto text-2xl shadow-lg"><i class="fas fa-check"></i></div>
-                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wide">Pedido Realizado!</h2>
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 text-left text-sm space-y-2">
-                        <div><strong>Código de Rastreio:</strong> <span class="font-mono bg-gray-200 px-2 py-0.5 rounded">${codigoRastreio}</span></div>
-                        <div><strong>Destinatário:</strong> ${usuarioLogado.nome}</div>
-                        <div><strong>Endereço de Entrega:</strong> ${usuarioLogado.endereco}</div>
+                // Limpar carrinho após sucesso
+                carrinho = [];
+                salvarCarrinhoLocal();
+                atualizarContadorCarrinho();
+
+                document.getElementById('conteudo-principal').innerHTML = `
+                    <div class="max-w-md mx-auto px-4 py-16 text-center space-y-6">
+                        <div class="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto text-2xl shadow-lg"><i class="fas fa-check"></i></div>
+                        <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wide">Pedido Realizado!</h2>
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 text-left text-sm space-y-2">
+                            <div><strong>Código de Rastreio:</strong> <span class="font-mono bg-gray-200 px-2 py-0.5 rounded">${codigoRastreio}</span></div>
+                            <div><strong>Destinatário:</strong> ${usuarioLogado.nome}</div>
+                        </div>
+                        <p class="text-[11px] text-gray-400">Verifique os detalhes na aba "Meus Pedidos".</p>
+                        <button onclick="window.location.reload();" class="w-full bg-black text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition">Voltar ao Início</button>
                     </div>
-                    <p class="text-[11px] text-gray-400">Os dados desta transação foram gravados com sucesso na rede central.</p>
-                    <button onclick="window.location.reload();" class="w-full bg-black text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition">Voltar ao Início</button>
-                </div>
-            `;
+                `;
+
+            } catch (err) {
+                alert("Erro ao processar checkout.");
+                if(btn) { btn.innerText = "Fechar Pedido"; btn.disabled = false; }
+            }
         }
 
-        // ENGENHARIA DE RASTREAMENTO: COMUNICAÇÃO DE BUSCA E MAPEAMENTO NA NUVEM
+        /* HISTÓRICO DE MEUS PEDIDOS */
+        async function carregarHistoricoPedidos() {
+            const container = document.getElementById('lista-pedidos-usuario');
+            if(!usuarioLogado) {
+                container.innerHTML = `
+                    <div class="text-center py-12 border border-dashed border-gray-200 rounded-2xl bg-gray-50">
+                        <p class="text-xs text-gray-500 uppercase tracking-wider mb-3">Conecte-se para ver seu histórico</p>
+                        <button onclick="abrirModalAuth('login')" class="bg-black text-white px-4 py-2 rounded-xl text-xs uppercase font-bold tracking-widest">Entrar</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `<div class="text-center text-xs text-gray-400 uppercase tracking-widest">Buscando histórico na nuvem...</div>`;
+
+            try {
+                const url = `${SUPABASE_URL}/rest/v1/pedidos?cliente_email=eq.${encodeURIComponent(usuarioLogado.email)}&order=id.desc`;
+                const resposta = await fetch(url, {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+                });
+                const pedidos = await resposta.json();
+
+                if(!pedidos || pedidos.length === 0) {
+                    container.innerHTML = `<div class="text-center text-xs text-gray-400 uppercase py-8">Nenhuma compra localizada neste perfil.</div>`;
+                    return;
+                }
+
+                container.innerHTML = "";
+                pedidos.forEach(p => {
+                    container.innerHTML += `
+                        <div class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                            <div class="flex flex-wrap justify-between items-center gap-2 border-b border-gray-100 pb-2.5">
+                                <div>
+                                    <span class="text-[10px] text-gray-400 uppercase font-bold block">Código Identificador</span>
+                                    <span class="font-mono bg-gray-100 text-gray-900 px-2 py-0.5 rounded text-xs font-bold">${p.numero_pedido}</span>
+                                </div>
+                                <span class="bg-black text-white text-[9px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">${p.status || 'Processando'}</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <span class="text-gray-400 uppercase font-bold text-[10px] block">Itens do Pedido</span>
+                                    <span class="text-gray-900 font-medium">${p.produto_nome}</span>
+                                </div>
+                                <div class="sm:text-right">
+                                    <span class="text-gray-400 uppercase font-bold text-[10px] block">Valor Pago</span>
+                                    <span class="text-gray-900 font-black text-sm">R$ ${parseFloat(p.valor_total).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                container.innerHTML = `<div class="text-center text-xs text-red-500 uppercase">Falha na varredura de dados.</div>`;
+            }
+        }
+
+        /* RASTREIO INDIVIDUAL */
         function abrirRastreio() {
             document.getElementById('modal-rastreio').classList.remove('hidden');
             document.getElementById('resultado-rastreio').classList.add('hidden');
@@ -517,9 +759,7 @@
             document.getElementById('codigo-rastreio-input').focus();
         }
 
-        function fecharRastreio() {
-            document.getElementById('modal-rastreio').classList.add('hidden');
-        }
+        function fecharRastreio() { document.getElementById('modal-rastreio').classList.add('hidden'); }
 
         async function executarRastreio() {
             const codigo = document.getElementById('codigo-rastreio-input').value.trim().toUpperCase();
@@ -529,34 +769,26 @@
             document.getElementById('erro-rastreio').classList.add('hidden');
 
             if (!codigo) return;
-
-            btn.innerText = "PESQUISANDO REDE...";
-            btn.disabled = true;
+            btn.innerText = "PESQUISANDO REDE..."; btn.disabled = true;
 
             try {
                 const url = `${SUPABASE_URL}/rest/v1/pedidos?numero_pedido=eq.${encodeURIComponent(codigo)}`;
-                const resposta = await fetch(url, {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-                });
+                const resposta = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
                 const dados = await resposta.json();
 
                 if (dados && dados.length > 0) {
-                    const pedidoFound = dados[0];
-                    document.getElementById('rastreio-status').innerText = pedidoFound.status || "Processando";
-                    document.getElementById('rastreio-produto').innerText = pedidoFound.produto_nome;
-                    document.getElementById('rastreio-cliente').innerText = pedidoFound.cliente_nome;
-                    document.getElementById('rastreio-endereco').innerText = pedidoFound.endereco_entrega;
-                    
+                    const p = dados[0];
+                    document.getElementById('rastreio-status').innerText = p.status || "Processando";
+                    document.getElementById('rastreio-produto').innerText = p.produto_nome;
+                    document.getElementById('rastreio-cliente').innerText = p.cliente_nome;
+                    document.getElementById('rastreio-endereco').innerText = p.endereco_entrega;
                     document.getElementById('resultado-rastreio').classList.remove('hidden');
                 } else {
                     document.getElementById('erro-rastreio').classList.remove('hidden');
                 }
-            } catch (err) {
-                console.error("Erro na busca do rastreio.");
-            }
+            } catch (err) { console.error(err); }
 
-            btn.innerText = "Buscar na Rede";
-            btn.disabled = false;
+            btn.innerText = "Buscar na Rede"; btn.disabled = false;
         }
 
         checarSessao();
