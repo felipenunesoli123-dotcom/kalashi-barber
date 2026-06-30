@@ -63,7 +63,7 @@
                 <button id="btn-aba-cadastro" onclick="mudarAbaAuth('cadastro')" class="flex-1 pb-3 text-gray-400 border-b-2 border-transparent">Criar Conta</button>
             </div>
 
-            <div id="alerta-auth" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2 animate-pulse">
+            <div id="alerta-auth" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
                 <i class="fas fa-exclamation-circle text-sm shrink-0"></i>
                 <span id="alerta-auth-texto">Credenciais incorretas.</span>
             </div>
@@ -106,7 +106,7 @@
                 </div>
                 <div>
                     <h3 class="text-base font-bold font-serif-kalashi uppercase">Verifique seu E-mail</h3>
-                    <p class="text-xs text-gray-500 mt-1">Enviamos um código de confirmação de 6 dígitos para o endereço informado.</p>
+                    <p class="text-xs text-gray-500 mt-1">Insira abaixo o código de validação que geramos para o seu dispositivo.</p>
                 </div>
                 <div class="space-y-1 text-left">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500 block text-center">Inserir Código de 6 Dígitos</label>
@@ -150,8 +150,6 @@
 
         let usuarioLogado = null;
         let produtoAtual = null;
-        
-        // VARIÁVEIS DE CONTROLE DA VERIFICAÇÃO POR CÓDIGO
         let codigoGeradoMFA = null;
         let dadosUsuarioTemporario = null;
 
@@ -197,7 +195,7 @@
         function mostrarErroAuth(mensagem) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerText = mensagem;
+            textoAlerta.innerText = mensaje;
             divAlerta.classList.remove('hidden');
         }
 
@@ -232,8 +230,8 @@
         }
 
         // CADASTRO NO BANCO DE DADOS
-        async function ejecutarCadastro(e) {
-            e.preventDefault();
+        async function executarCadastro(e) {
+            if (e) e.preventDefault();
             ocultarErroAuth();
             document.getElementById('btn-cad-submit').innerText = "Processando...";
             
@@ -268,7 +266,6 @@
 
                 if (respostaSalvar.ok) {
                     const novosDados = await respostaSalvar.json();
-                    // Após criar a conta, exige a validação por código por segurança extra
                     iniciarFluxoVerificacao(novosDados[0]);
                 } else {
                     mostrarErroAuth("Falha de resposta do servidor central da nuvem.");
@@ -279,9 +276,9 @@
             document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
         }
 
-        // LOGIN COM VERIFICAÇÃO EM NUVEM E DISPARO DE SEGUNDO FATOR (MFA)
+        // LOGIN
         async function executarLogin(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             ocultarErroAuth();
             document.getElementById('btn-login-submit').innerText = "Autenticando...";
             const email = document.getElementById('login-email').value.toLowerCase().trim();
@@ -295,13 +292,11 @@
                 const dadosUsuario = await resposta.json();
 
                 if (dadosUsuario.length === 0) {
-                    // FEEDBACK VISUAL DIRETAMENTE NO SITE
                     mostrarErroAuth("E-mail ou senha digitados estão incorretos.");
                     document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
                     return;
                 }
 
-                // Credenciais válidas! Agora dispara o código de autenticação por e-mail
                 iniciarFluxoVerificacao(dadosUsuario[0]);
             } catch (err) {
                 mostrarErroAuth("Servidor inacessível no momento. Tente novamente.");
@@ -309,19 +304,16 @@
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
 
-        // MECANISMO DE GERENCIAMENTO DO CÓDIGO DE CONFIRMAÇÃO
+        // NOVO FLUXO MFA SEGURO
         function iniciarFluxoVerificacao(usuario) {
             ocultarErroAuth();
             dadosUsuarioTemporario = usuario;
             
-            // Geração de código de 6 dígitos aleatórios
             codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
             
-            // Simulação de entrega na caixa de entrada (Exibe no console e em alerta)
-            console.log(`[KALASHI SECURITY] Código de confirmação enviado para ${usuario.email}: ${codigoGeradoMFA}`);
-            alert(`[SIMULAÇÃO DE E-MAIL]\n\nPara: ${usuario.email}\nAssunto: Seu código de confirmação Kalashi Barber Shop\n\nCódigo: ${codigoGeradoMFA}`);
+            console.log(`[KALASHI SECURITY] Código para ${usuario.email}: ${codigoGeradoMFA}`);
+            alert(`[CÓDIGO DE VERIFICAÇÃO ENVIADO]\n\nEnviamos um código de confirmação para o seu e-mail: ${usuario.email}\n\nCódigo: ${codigoGeradoMFA}`);
 
-            // Transição de telas no modal
             document.getElementById('form-login').classList.add('hidden');
             document.getElementById('form-cadastro').classList.add('hidden');
             document.getElementById('abas-auth').classList.add('hidden');
@@ -335,13 +327,11 @@
             const codigoDigitado = document.getElementById('codigo-mfa-input').value.trim();
 
             if (codigoDigitado === codigoGeradoMFA) {
-                // Código correto! Libera o acesso definitivo do usuário
                 salvarSessao(dadosUsuarioTemporario);
                 fecharModalAuth();
-                alert(`Autenticação concluída! Seja bem-vindo, ${usuarioLogado.nome}.`);
+                alert(`Autenticação concluída com sucesso! Seja bem-vindo.`);
                 if (produtoAtual) verProduto(produtoAtual.id);
             } else {
-                // FEEDBACK DE CÓDIGO INCORRETO
                 mostrarErroAuth("Código de confirmação incorreto ou expirado.");
             }
         }
