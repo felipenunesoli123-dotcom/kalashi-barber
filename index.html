@@ -157,7 +157,7 @@
                     </div>
                 </div>
 
-                <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Criar Minha Conta</button>
+                <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Criar My Conta</button>
             </form>
 
             <!-- TELA DE CONFIRMAÇÃO DO CÓDIGO (MFA) -->
@@ -452,7 +452,7 @@
         }
 
         async function consultarMecanismoCEP(prefixo) {
-            const cep = document.getElementById(`${prefixo}-cep').value.replace(/\D/g, '');
+            const cep = document.getElementById(`${prefixo}-cep`).value.replace(/\D/g, '');
             if(cep.length !== 8) return;
 
             const inputRua = document.getElementById(`${prefixo}-rua`);
@@ -497,7 +497,6 @@
             }
         }
 
-        // MONTAGEM DO PAINEL MEU ACESSO
         function preencherPainelMeuAcesso() {
             const alerta = document.getElementById('alerta-perfil');
             alerta.classList.add('hidden');
@@ -528,7 +527,6 @@
             const senha = document.getElementById('perf-senha').value;
             const dataNascimento = document.getElementById('perf-nascimento').value;
 
-            // VALIDAÇÃO DE MAIORIDADE MANDATÓRIA (TEM QUE SER MAIOR)
             if (calcularIdadeValida(dataNascimento) < 18) {
                 alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-red-50 border border-red-200 text-red-700";
                 alerta.innerHTML = `<i class="fas fa-ban"></i><span>Alteração negada. O sistema da barbearia exige maioridade (18 anos completos) para manutenção de conta.</span>`;
@@ -539,13 +537,12 @@
             btn.innerText = "ATUALIZANDO SERVIDORES...";
             btn.disabled = true;
 
-            // Construção do endereço se os campos de localização forem usados
             const cep = document.getElementById('perf-cep').value.trim();
             let enderecoFinal = usuarioLogado.endereco;
 
             if (cep.length === 8) {
                 const estado = document.getElementById('perf-estado').value;
-                const cidade = document.getElementById('perf-cidade').value;
+                const city = document.getElementById('perf-cidade').value;
                 const rua = document.getElementById('perf-rua').value.trim();
                 const numero = document.getElementById('perf-numero').value.trim();
                 const bairro = document.getElementById('perf-bairro').value.trim();
@@ -553,7 +550,7 @@
                 
                 enderecoFinal = `${rua}, Nº ${numero}`;
                 if(complemento) enderecoFinal += ` (${complemento})`;
-                enderecoFinal += ` - Bairro ${bairro}, ${cidade}/${estado} - CEP: ${cep}`;
+                enderecoFinal += ` - Bairro ${bairro}, ${city}/${estado} - CEP: ${cep}`;
             }
 
             try {
@@ -617,7 +614,7 @@
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = mensagemHtml;
+            textoAlerta.innerHTML = messageHtml;
             divAlerta.classList.remove('hidden');
         }
 
@@ -646,12 +643,11 @@
             }
         }
 
-        async function executarCadastro(e) {
+        async function ejecutarCadastro(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
             
             const dataNasc = document.getElementById('cad-nascimento').value;
-            // CRÍTICO: VALIDAÇÃO DE MAIORIDADE NO CADASTRO COLETIVO
             if (calcularIdadeValida(dataNasc) < 18) {
                 mostrarErroAuth("Acesso negado. A criação de conta é restrita para maiores de 18 anos.");
                 return;
@@ -664,7 +660,7 @@
             
             const cep = document.getElementById('cad-cep').value.trim();
             const estado = document.getElementById('cad-estado').value;
-            const cidade = document.getElementById('cad-cidade').value;
+            const city = document.getElementById('cad-cidade').value;
             const rua = document.getElementById('cad-rua').value.trim();
             const numero = document.getElementById('cad-numero').value.trim();
             const bairro = document.getElementById('cad-bairro').value.trim();
@@ -672,7 +668,7 @@
             
             let enderecoCompleto = `${rua}, Nº ${numero}`;
             if(complemento) enderecoCompleto += ` (${complemento})`;
-            enderecoCompleto += ` - Bairro ${bairro}, ${cidade}/${estado} - CEP: ${cep}`;
+            enderecoCompleto += ` - Bairro ${bairro}, ${city}/${estado} - CEP: ${cep}`;
 
             try {
                 const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
@@ -681,7 +677,7 @@
 
                 if (dadosChecagem.length > 0) {
                     mostrarErroAuth(`Este e-mail já está cadastrado. <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black hover:text-gray-700">Entrar</a>.`);
-                    document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
+                    document.getElementById('btn-cad-submit').innerText = "Criar My Conta";
                     return;
                 }
 
@@ -698,7 +694,7 @@
                     mostrarErroAuth("Falha de resposta do servidor.");
                 }
             } catch (err) { mostrarErroAuth("Erro de conexão."); }
-            document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
+            document.getElementById('btn-cad-submit').innerText = "Criar My Conta";
         }
 
         async function executarLogin(e) {
