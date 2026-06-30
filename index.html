@@ -15,6 +15,7 @@
 </head>
 <body class="bg-white text-black font-sans antialiased selection:bg-black selection:text-white overflow-x-hidden pb-16">
 
+    <!-- BOTÕES FLUTUANTES -->
     <div class="fixed bottom-6 left-6 z-50 flex flex-col gap-3">
         <a href="https://www.instagram.com/kalashibarbershop?igsh=MXc3aXZtOHZpMjN5aQ==" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300">
             <i class="fab fa-instagram text-3xl"></i>
@@ -24,6 +25,7 @@
         </a>
     </div>
 
+    <!-- CABEÇALHO -->
     <header class="border-b border-gray-200 bg-white/90 backdrop-blur-md sticky top-0 z-40 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex justify-between items-center gap-4">
             
@@ -48,7 +50,6 @@
 
             <div class="flex items-center gap-3 sm:gap-4">
                 <button onclick="abrirRastreio()" class="text-xs uppercase tracking-widest font-bold text-gray-600 hover:text-black transition">Rastrear</button>
-                
                 <button onclick="alternarCarrinho()" class="relative p-2 text-gray-700 hover:text-black transition">
                     <i class="fas fa-shopping-bag text-lg"></i>
                     <span id="carrinho-contador" class="absolute -top-1 -right-1 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
@@ -58,6 +59,7 @@
         </div>
     </header>
 
+    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-gray-100 shadow-2xl relative my-8">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -72,6 +74,7 @@
                 <span id="alerta-auth-texto">Credenciais incorretas.</span>
             </div>
 
+            <!-- FORMULÁRIO DE LOGIN -->
             <form id="form-login" onsubmit="executarLogin(event)" class="space-y-4">
                 <div class="space-y-1">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail</label>
@@ -84,10 +87,17 @@
                 <button type="submit" id="btn-login-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Entrar no Sistema</button>
             </form>
 
+            <!-- FORMULÁRIO DE CADASTRO COM IDADE -->
             <form id="form-cadastro" onsubmit="executarCadastro(event)" class="space-y-4 hidden">
-                <div class="space-y-1">
-                    <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Nome Completo</label>
-                    <input type="text" id="cad-nome" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Nome Completo</label>
+                        <input type="text" id="cad-nome" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Data de Nascimento</label>
+                        <input type="date" id="cad-nascimento" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -106,12 +116,12 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
                         <div class="space-y-1">
-                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">CEP (Apenas Números)</label>
-                            <input type="text" id="cad-cep" maxlength="8" placeholder="00000000" oninput="consultarMecanismoCEP()" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm font-mono tracking-wider outline-none focus:border-black">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">CEP</label>
+                            <input type="text" id="cad-cep" maxlength="8" placeholder="00000000" oninput="consultarMecanismoCEP('cad')" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm font-mono tracking-wider outline-none focus:border-black">
                         </div>
                         <div class="space-y-1 sm:col-span-2">
                             <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Estado (UF)</label>
-                            <select id="cad-estado" onchange="carregarCidadesPorEstadoIBGE()" required class="w-full border border-gray-300 bg-white rounded-xl px-3 py-2.5 text-sm outline-none focus:border-black">
+                            <select id="cad-estado" onchange="carregarCidadesPorEstadoIBGE('cad')" required class="w-full border border-gray-300 bg-white rounded-xl px-3 py-2.5 text-sm outline-none focus:border-black">
                                 <option value="">Selecione o Estado</option>
                             </select>
                         </div>
@@ -127,11 +137,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
                         <div class="space-y-1 sm:col-span-2">
                             <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Logradouro / Rua</label>
-                            <input type="text" id="cad-rua" required placeholder="Ex: Av. Paulista" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            <input type="text" id="cad-rua" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Número</label>
-                            <input type="text" id="cad-numero" required placeholder="Nº" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            <input type="text" id="cad-numero" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
                         </div>
                     </div>
 
@@ -141,8 +151,8 @@
                             <input type="text" id="cad-bairro" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Complemento (Opcional)</label>
-                            <input type="text" id="cad-complemento" placeholder="Ex: Ap 42, Bloco B" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Complemento</label>
+                            <input type="text" id="cad-complemento" placeholder="Opcional" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
                         </div>
                     </div>
                 </div>
@@ -150,6 +160,7 @@
                 <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Criar Minha Conta</button>
             </form>
 
+            <!-- TELA DE CONFIRMAÇÃO DO CÓDIGO (MFA) -->
             <div id="fluxo-verificacao-email" class="hidden text-center space-y-4 py-2">
                 <div class="w-12 h-12 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center mx-auto text-black">
                     <i class="fas fa-envelope-open-text text-xl"></i>
@@ -169,15 +180,14 @@
         </div>
     </div>
 
+    <!-- MODAL DE RASTREAMENTO -->
     <div id="modal-rastreio" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharRastreio()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
-            
             <div class="text-center space-y-2 mb-6">
                 <h3 class="text-lg font-serif-kalashi font-black uppercase tracking-wider text-gray-900">Rastrear Objeto</h3>
                 <p class="text-xs text-gray-500">Insira o código identificador para localizar sua compra.</p>
             </div>
-
             <div class="space-y-4">
                 <div class="space-y-1">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Código de Rastreio</label>
@@ -185,7 +195,6 @@
                 </div>
                 <button onclick="executarRastreio()" id="btn-rastreio-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl hover:bg-gray-800 transition">Buscar na Rede</button>
             </div>
-
             <div id="resultado-rastreio" class="hidden mt-6 pt-6 border-t border-gray-100 space-y-4 text-sm">
                 <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-2.5">
                     <div class="flex justify-between items-center">
@@ -206,14 +215,14 @@
                     </div>
                 </div>
             </div>
-
             <div id="erro-rastreio" class="hidden mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
                 <i class="fas fa-exclamation-circle text-sm shrink-0"></i>
-                <span>Nenhum pedido encontrado com este código identificador.</span>
+                <span>Nenhum pedido encontrado.</span>
             </div>
         </div>
     </div>
 
+    <!-- SIDEBAR DRAWER DO CARRINHO -->
     <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm shadow-inner" onclick="alternarCarrinho()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-l-gray-100">
@@ -224,7 +233,6 @@
                 </div>
                 <div id="carrinho-itens-lista" class="mt-4 space-y-4 overflow-y-auto max-h-[60vh] pr-1 no-scrollbar"></div>
             </div>
-
             <div class="border-t border-gray-100 pt-4 bg-white space-y-4">
                 <div class="flex justify-between items-center font-serif-kalashi font-black text-lg">
                     <span>TOTAL:</span>
@@ -235,15 +243,19 @@
         </div>
     </div>
 
+    <!-- CONTEÚDO DINÂMICO PRINCIPAL -->
     <div id="conteudo-principal">
         
+        <!-- NAV ABAS PRINCIPAIS -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-            <div class="flex border-b border-gray-200 text-xs font-bold uppercase tracking-widest">
-                <button id="tab-vitrine" onclick="mudarPainelPrincipal('vitrine')" class="pb-3 text-black border-b-2 border-black mr-6">Vitrine de Produtos</button>
+            <div class="flex border-b border-gray-200 text-xs font-bold uppercase tracking-widest overflow-x-auto no-scrollbar whitespace-nowrap gap-6">
+                <button id="tab-vitrine" onclick="mudarPainelPrincipal('vitrine')" class="pb-3 text-black border-b-2 border-black">Vitrine de Produtos</button>
                 <button id="tab-pedidos" onclick="mudarPainelPrincipal('pedidos')" class="pb-3 text-gray-400 border-b-2 border-transparent">Meus Pedidos</button>
+                <button id="tab-acesso" onclick="mudarPainelPrincipal('acesso')" class="pb-3 text-gray-400 border-b-2 border-transparent">Meu Acesso</button>
             </div>
         </div>
 
+        <!-- VITRINE -->
         <div id="painel-vitrine">
             <section class="bg-gray-50 border-b border-gray-100 py-12 sm:py-16 text-center px-4 w-full mt-4">
                 <div class="max-w-3xl mx-auto">
@@ -252,15 +264,99 @@
                     <p class="text-gray-600 text-sm max-w-xl mx-auto mb-8">Equipamentos de alta performance e cuidados pessoais com envio rápido para todo o Brasil.</p>
                 </div>
             </section>
-
             <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8"></div>
             </main>
         </div>
 
+        <!-- MEUS PEDIDOS -->
         <div id="painel-pedidos" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
             <h2 class="text-xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Histórico de Compras</h2>
             <div id="lista-pedidos-usuario" class="space-y-4"></div>
+        </div>
+
+        <!-- PAINEL MEU ACESSO (SOLICITADO) -->
+        <div id="painel-acesso" class="hidden max-w-2xl mx-auto px-4 py-12 w-full">
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900">Dados cadastrais</h2>
+                    <p class="text-xs text-gray-500 mt-1">Gerencie e atualize as informações completas do seu perfil de segurança.</p>
+                </div>
+
+                <div id="alerta-perfil" class="hidden p-3 text-xs rounded-xl flex items-center gap-2"></div>
+
+                <form id="form-edicao-perfil" onsubmit="atualizarDadosPerfilNuvem(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Nome Completo</label>
+                            <input type="text" id="perf-nome" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Data de Nascimento</label>
+                            <input type="date" id="perf-nascimento" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail de Login</label>
+                            <input type="email" id="perf-email" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Alterar Senha</label>
+                            <input type="password" id="perf-senha" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-4 mt-2">
+                        <span class="text-[11px] font-black text-black uppercase tracking-widest block mb-3"><i class="fas fa-map-marker-alt mr-1"></i> Atualizar Localização</span>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+                            <div class="space-y-1">
+                                <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">CEP</label>
+                                <input type="text" id="perf-cep" maxlength="8" oninput="consultarMecanismoCEP('perf')" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm font-mono tracking-wider outline-none focus:border-black">
+                            </div>
+                            <div class="space-y-1 sm:col-span-2">
+                                <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Estado (UF)</label>
+                                <select id="perf-estado" onchange="carregarCidadesPorEstadoIBGE('perf')" class="w-full border border-gray-300 bg-white rounded-xl px-3 py-2.5 text-sm outline-none focus:border-black">
+                                    <option value="">Selecione o Estado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1 mb-3">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Cidade</label>
+                            <select id="perf-cidade" class="w-full border border-gray-300 bg-white rounded-xl px-3 py-2.5 text-sm outline-none focus:border-black">
+                                <option value="">Selecione a Cidade</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+                            <div class="space-y-1 sm:col-span-2">
+                                <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Rua</label>
+                                <input type="text" id="perf-rua" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Número</label>
+                                <input type="text" id="perf-numero" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Bairro</label>
+                                <input type="text" id="perf-bairro" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Complemento</label>
+                                <input type="text" id="perf-complemento" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-salvar-perfil" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Salvar Alterações</button>
+                </form>
+            </div>
         </div>
 
     </div>
@@ -298,46 +394,53 @@
             }
             renderizarComponentesAuth();
             carregarCarrinhoLocal();
-            carregarEstadosIBGE();
+            carregarEstadosIBGE('cad');
+            carregarEstadosIBGE('perf');
         }
 
-        /* ENGENHARIA DE LOCALIZAÇÃO COMPLEXA: IBGE + VIACEP */
-        async function carregarEstadosIBGE() {
+        function calcularIdadeValida(dataNascimentoString) {
+            const hoje = new Date();
+            const nasc = new Date(dataNascimentoString);
+            let idade = hoje.getFullYear() - nasc.getFullYear();
+            const m = hoje.getMonth() - nasc.getMonth();
+            if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+                idade--;
+            }
+            return idade;
+        }
+
+        async function carregarEstadosIBGE(prefixo) {
             try {
-                const res = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados");
-                const dados = await res.json();
-                // Ordenação Alfabética estrita por nome do Estado
-                listaEstadosGlobais = dados.sort((a, b) => a.nome.localeCompare(b.nome));
-                
-                const seletor = document.getElementById('cad-estado');
+                if(listaEstadosGlobais.length === 0) {
+                    const res = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados");
+                    const dados = await res.json();
+                    listaEstadosGlobais = dados.sort((a, b) => a.nome.localeCompare(b.nome));
+                }
+                const seletor = document.getElementById(`${prefixo}-estado`);
                 if(seletor) {
                     seletor.innerHTML = '<option value="">Selecione o Estado</option>';
                     listaEstadosGlobais.forEach(est => {
                         seletor.innerHTML += `<option value="${est.sigla}" data-id="${est.id}">${est.nome} (${est.sigla})</option>`;
                     });
                 }
-            } catch (err) { console.error("Erro ao consumir API do IBGE (Estados)."); }
+            } catch (err) { console.error(err); }
         }
 
-        async function carregarCidadesPorEstadoIBGE(nomeCidadePrePreenchida = "") {
-            const seletorEstado = document.getElementById('cad-estado');
-            const seletorCidade = document.getElementById('cad-cidade');
+        async function carregarCidadesPorEstadoIBGE(prefixo, nomeCidadePrePreenchida = "") {
+            const seletorEstado = document.getElementById(`${prefixo}-estado`);
+            const seletorCidade = document.getElementById(`${prefixo}-cidade`);
             if(!seletorEstado || !seletorCidade) return;
 
             const opcaoSelecionada = seletorEstado.options[seletorEstado.selectedIndex];
+            if(!opcaoSelecionada) return;
             const estadoId = opcaoSelecionada.getAttribute('data-id');
 
-            if(!estadoId) {
-                seletorCidade.innerHTML = '<option value="">Selecione a Cidade</option>';
-                return;
-            }
-
+            if(!estadoId) { seletorCidade.innerHTML = '<option value="">Selecione a Cidade</option>'; return; }
             seletorCidade.innerHTML = '<option value="">Carregando Cidades...</option>';
 
             try {
                 const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`);
                 const cidades = await res.json();
-                // Ordenação Alfabética das cidades correspondentes
                 const cidadesOrdenadas = cidades.sort((a, b) => a.nome.localeCompare(b.nome));
 
                 seletorCidade.innerHTML = '<option value="">Selecione a Cidade</option>';
@@ -345,49 +448,144 @@
                     const selected = cid.nome.toLowerCase() === nomeCidadePrePreenchida.toLowerCase() ? 'selected' : '';
                     seletorCidade.innerHTML += `<option value="${cid.nome}" ${selected}>${cid.nome}</option>`;
                 });
-            } catch (err) {
-                seletorCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>';
-            }
+            } catch (err) { seletorCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>'; }
         }
 
-        async function consultarMecanismoCEP() {
-            const cep = document.getElementById('cad-cep').value.replace(/\D/g, '');
+        async function consultarMecanismoCEP(prefixo) {
+            const cep = document.getElementById(`${prefixo}-cep').value.replace(/\D/g, '');
             if(cep.length !== 8) return;
 
-            const inputRua = document.getElementById('cad-rua');
-            const inputBairro = document.getElementById('cad-bairro');
-            const seletorEstado = document.getElementById('cad-estado');
-
-            inputRua.value = "Buscando...";
-            inputBairro.value = "Buscando...";
+            const inputRua = document.getElementById(`${prefixo}-rua`);
+            const inputBairro = document.getElementById(`${prefixo}-bairro`);
+            const seletorEstado = document.getElementById(`${prefixo}-estado`);
 
             try {
                 const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                 const dados = await res.json();
-
-                if(dados.erro) {
-                    alert("CEP não localizado na base dos Correios.");
-                    inputRua.value = "";
-                    inputBairro.value = "";
-                    return;
-                }
+                if(dados.erro) return;
 
                 inputRua.value = dados.logradouro || "";
                 inputBairro.value = dados.bairro || "";
                 
-                // Mapeia e sincroniza o estado selecionado automaticamente
                 if(dados.uf) {
                     seletorEstado.value = dados.uf;
-                    // Dispara a carga de cidades em ordem alfabética e seleciona a cidade vinda do CEP
-                    await carregarCidadesPorEstadoIBGE(dados.localidade || "");
+                    await carregarCidadesPorEstadoIBGE(prefixo, dados.localidade || "");
                 }
+            } catch(err) { console.error(err); }
+        }
 
-                document.getElementById('cad-numero').focus();
-            } catch(err) {
-                console.error("Falha na varredura do ViaCEP");
-                inputRua.value = "";
-                inputBairro.value = "";
+        function mudarPainelPrincipal(painel) {
+            document.getElementById('painel-vitrine').classList.add('hidden');
+            document.getElementById('painel-pedidos').classList.add('hidden');
+            document.getElementById('painel-acesso').classList.add('hidden');
+            
+            document.getElementById('tab-vitrine').className = "pb-3 text-gray-400 border-b-2 border-transparent";
+            document.getElementById('tab-pedidos').className = "pb-3 text-gray-400 border-b-2 border-transparent";
+            document.getElementById('tab-acesso').className = "pb-3 text-gray-400 border-b-2 border-transparent";
+
+            if (painel === 'vitrine') {
+                document.getElementById('painel-vitrine').classList.remove('hidden');
+                document.getElementById('tab-vitrine').className = "pb-3 text-black border-b-2 border-black";
+            } else if (painel === 'pedidos') {
+                document.getElementById('painel-pedidos').classList.remove('hidden');
+                document.getElementById('tab-pedidos').className = "pb-3 text-black border-b-2 border-black";
+                carregarHistoricoPedidos();
+            } else if (painel === 'acesso') {
+                document.getElementById('painel-acesso').classList.remove('hidden');
+                document.getElementById('tab-acesso').className = "pb-3 text-black border-b-2 border-black";
+                preencherPainelMeuAcesso();
             }
+        }
+
+        // MONTAGEM DO PAINEL MEU ACESSO
+        function preencherPainelMeuAcesso() {
+            const alerta = document.getElementById('alerta-perfil');
+            alerta.classList.add('hidden');
+
+            if (!usuarioLogado) {
+                document.getElementById('form-edicao-perfil').classList.add('hidden');
+                alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700";
+                alerta.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>Conecte-se ao sistema para visualizar seus dados de acesso.</span>`;
+                alerta.classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('form-edicao-perfil').classList.remove('hidden');
+            document.getElementById('perf-nome').value = usuarioLogado.nome || "";
+            document.getElementById('perf-email').value = usuarioLogado.email || "";
+            document.getElementById('perf-senha').value = usuarioLogado.senha || "";
+            document.getElementById('perf-nascimento').value = usuarioLogado.data_nascimento || "";
+        }
+
+        async function atualizarDadosPerfilNuvem(e) {
+            e.preventDefault();
+            const alerta = document.getElementById('alerta-perfil');
+            const btn = document.getElementById('btn-salvar-perfil');
+            alerta.classList.add('hidden');
+
+            const nome = document.getElementById('perf-nome').value;
+            const email = document.getElementById('perf-email').value.toLowerCase().trim();
+            const senha = document.getElementById('perf-senha').value;
+            const dataNascimento = document.getElementById('perf-nascimento').value;
+
+            // VALIDAÇÃO DE MAIORIDADE MANDATÓRIA (TEM QUE SER MAIOR)
+            if (calcularIdadeValida(dataNascimento) < 18) {
+                alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-red-50 border border-red-200 text-red-700";
+                alerta.innerHTML = `<i class="fas fa-ban"></i><span>Alteração negada. O sistema da barbearia exige maioridade (18 anos completos) para manutenção de conta.</span>`;
+                alerta.classList.remove('hidden');
+                return;
+            }
+
+            btn.innerText = "ATUALIZANDO SERVIDORES...";
+            btn.disabled = true;
+
+            // Construção do endereço se os campos de localização forem usados
+            const cep = document.getElementById('perf-cep').value.trim();
+            let enderecoFinal = usuarioLogado.endereco;
+
+            if (cep.length === 8) {
+                const estado = document.getElementById('perf-estado').value;
+                const cidade = document.getElementById('perf-cidade').value;
+                const rua = document.getElementById('perf-rua').value.trim();
+                const numero = document.getElementById('perf-numero').value.trim();
+                const bairro = document.getElementById('perf-bairro').value.trim();
+                const complemento = document.getElementById('perf-complemento').value.trim();
+                
+                enderecoFinal = `${rua}, Nº ${numero}`;
+                if(complemento) enderecoFinal += ` (${complemento})`;
+                enderecoFinal += ` - Bairro ${bairro}, ${cidade}/${estado} - CEP: ${cep}`;
+            }
+
+            try {
+                const urlUpdate = `${SUPABASE_URL}/rest/v1/clientes?id=eq.${usuarioLogado.id}`;
+                const res = await fetch(urlUpdate, {
+                    method: "PATCH",
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Content-Type": "application/json",
+                        "Prefer": "return=representation"
+                    },
+                    body: JSON.stringify({ nome, email, senha, data_nascimento: dataNascimento, endereco: enderecoFinal })
+                });
+
+                if (res.ok) {
+                    const dadosAtualizados = await res.json();
+                    salvarSessao(dadosAtualizados[0]);
+                    alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-green-50 border border-green-200 text-green-700";
+                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Matriz de dados atualizada com sucesso em nuvem!</span>`;
+                    alerta.classList.remove('hidden');
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-red-50 border border-red-200 text-red-700";
+                alerta.innerHTML = `<i class="fas fa-times-circle"></i><span>Erro na comunicação com a base de dados central.</span>`;
+                alerta.classList.remove('hidden');
+            }
+
+            btn.innerText = "Salvar Alterações";
+            btn.disabled = false;
         }
 
         function salvarSessao(usuario) {
@@ -398,9 +596,6 @@
             }));
             usuarioLogado = usuario;
             renderizarComponentesAuth();
-            if(!document.getElementById('painel-pedidos').classList.contains('hidden')) {
-                carregarHistoricoPedidos();
-            }
         }
 
         function renderizarComponentesAuth() {
@@ -419,25 +614,10 @@
             }
         }
 
-        function mudarPainelPrincipal(painel) {
-            if (painel === 'vitrine') {
-                document.getElementById('painel-vitrine').classList.remove('hidden');
-                document.getElementById('painel-pedidos').classList.add('hidden');
-                document.getElementById('tab-vitrine').className = "pb-3 text-black border-b-2 border-black mr-6";
-                document.getElementById('tab-pedidos').className = "pb-3 text-gray-400 border-b-2 border-transparent";
-            } else {
-                document.getElementById('painel-vitrine').classList.add('hidden');
-                document.getElementById('painel-pedidos').classList.remove('hidden');
-                document.getElementById('tab-vitrine').className = "pb-3 text-gray-400 border-b-2 border-transparent mr-6";
-                document.getElementById('tab-pedidos').className = "pb-3 text-black border-b-2 border-black";
-                carregarHistoricoPedidos();
-            }
-        }
-
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = messageHtml || mensagemHtml;
+            textoAlerta.innerHTML = mensagemHtml;
             divAlerta.classList.remove('hidden');
         }
 
@@ -449,10 +629,7 @@
             mudarAbaAuth(aba);
         }
 
-        function fecharModalAuth() {
-            document.getElementById('modal-auth').classList.add('hidden');
-            ocultarErroAuth();
-        }
+        function fecharModalAuth() { document.getElementById('modal-auth').classList.add('hidden'); ocultarErroAuth(); }
 
         function mudarAbaAuth(aba) {
             ocultarErroAuth();
@@ -472,13 +649,19 @@
         async function executarCadastro(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
-            document.getElementById('btn-cad-submit').innerText = "Processando...";
             
+            const dataNasc = document.getElementById('cad-nascimento').value;
+            // CRÍTICO: VALIDAÇÃO DE MAIORIDADE NO CADASTRO COLETIVO
+            if (calcularIdadeValida(dataNasc) < 18) {
+                mostrarErroAuth("Acesso negado. A criação de conta é restrita para maiores de 18 anos.");
+                return;
+            }
+
+            document.getElementById('btn-cad-submit').innerText = "Processando...";
             const nome = document.getElementById('cad-nome').value;
             const email = document.getElementById('cad-email').value.toLowerCase().trim();
             const senha = document.getElementById('cad-senha').value;
             
-            // CONCATENAÇÃO INTELIGENTE DO NOVO ENDEREÇO ESTRUTURADO
             const cep = document.getElementById('cad-cep').value.trim();
             const estado = document.getElementById('cad-estado').value;
             const cidade = document.getElementById('cad-cidade').value;
@@ -493,9 +676,7 @@
 
             try {
                 const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
-                const respostaChecagem = await fetch(checarUrl, {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-                });
+                const respostaChecagem = await fetch(checarUrl, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
                 const dadosChecagem = await respostaChecagem.json();
 
                 if (dadosChecagem.length > 0) {
@@ -506,13 +687,8 @@
 
                 const respostaSalvar = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
                     method: "POST",
-                    headers: {
-                        "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`,
-                        "Content-Type": "application/json",
-                        "Prefer": "return=representation"
-                    },
-                    body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto })
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=representation" },
+                    body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto, data_nascimento: dataNasc })
                 });
 
                 if (respostaSalvar.ok) {
@@ -521,9 +697,7 @@
                 } else {
                     mostrarErroAuth("Falha de resposta do servidor.");
                 }
-            } catch (err) {
-                mostrarErroAuth("Erro de conexão.");
-            }
+            } catch (err) { mostrarErroAuth("Erro de conexão."); }
             document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
         }
 
@@ -536,9 +710,7 @@
 
             try {
                 const urlBusca = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}`;
-                const resposta = await fetch(urlBusca, {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-                });
+                const resposta = await fetch(urlBusca, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
                 const dadosUsuario = await resposta.json();
 
                 if (dadosUsuario.length === 0) {
@@ -548,9 +720,7 @@
                 }
 
                 iniciarFluxoVerificacao(dadosUsuario[0]);
-            } catch (err) {
-                mostrarErroAuth("Servidor inacessível.");
-            }
+            } catch (err) { mostrarErroAuth("Servidor inacessível."); }
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
 
@@ -558,7 +728,6 @@
             ocultarErroAuth();
             dadosUsuarioTemporario = usuario;
             codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log(`[KALASHI SECURITY] Código: ${codigoGeradoMFA}`);
             alert(`[CÓDIGO DE VERIFICAÇÃO]\n\nCódigo: ${codigoGeradoMFA}`);
 
             document.getElementById('form-login').classList.add('hidden');
@@ -577,35 +746,26 @@
                 salvarSessao(dadosUsuarioTemporario);
                 fecharModalAuth();
                 alert(`Conectado com sucesso!`);
-            } else {
-                mostrarErroAuth("Código incorreto.");
-            }
+                window.location.reload();
+            } else { mostrarErroAuth("Código incorreto."); }
         }
 
         function cancelarVerificacao() {
-            codigoGeradoMFA = null;
-            dadosUsuarioTemporario = null;
+            codigoGeradoMFA = null; dadosUsuarioTemporario = null;
             document.getElementById('abas-auth').classList.remove('hidden');
             document.getElementById('fluxo-verificacao-email').classList.add('hidden');
             mudarAbaAuth('login');
         }
 
-        function executarLogout() {
-            localStorage.removeItem('kalashi_global_session');
-            usuarioLogado = null;
-            window.location.reload();
-        }
+        function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
         function renderizarVitrine() {
             const grid = document.querySelector('#produtos > div');
-            if(!grid) return;
-            grid.innerHTML = '';
+            if(!grid) return; grid.innerHTML = '';
             Object.values(produtosDB).forEach(p => {
                 grid.innerHTML += `
                     <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                        <div class="bg-gray-50 h-48 rounded-xl flex items-center justify-center mb-4">
-                            <i class="fas ${p.icone} text-5xl text-gray-400"></i>
-                        </div>
+                        <div class="bg-gray-50 h-48 rounded-xl flex items-center justify-center mb-4"><i class="fas ${p.icone} text-5xl text-gray-400"></i></div>
                         <div>
                             <span class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">${p.categoria}</span>
                             <h3 class="text-base font-bold font-serif-kalashi mt-1 mb-2">${p.nome}</h3>
@@ -619,91 +779,44 @@
             });
         }
 
-        /* GERENCIAMENTO DO CARRINHO DE COMPRAS */
-        function alternarCarrinho() {
-            const drawer = document.getElementById('drawer-carrinho');
-            drawer.classList.toggle('hidden');
-            renderizarCarrinhoDrawer();
-        }
+        function alternarCarrinho() { const drawer = document.getElementById('drawer-carrinho'); drawer.classList.toggle('hidden'); renderizarCarrinhoDrawer(); }
 
         function adicionarAoCarrinho(id) {
             const prod = produtosDB[id];
             const itemExistente = carrinho.find(item => item.id === id);
-
-            if(itemExistente) {
-                itemExistente.quantidade += 1;
-            } else {
-                carrinho.push({ ...prod, quantidade: 1 });
-            }
-
-            atualizarContadorCarrinho();
-            salvarCarrinhoLocal();
-            alert(`"${prod.nome}" foi adicionado ao seu carrinho.`);
+            if(itemExistente) { itemExistente.quantidade += 1; } else { carrinho.push({ ...prod, grandfather: true, quantidade: 1 }); }
+            atualizarContadorCarrinho(); salvarCarrinhoLocal(); alert(`"${prod.nome}" foi adicionado.`);
         }
 
         function alterarQuantidadeCarrinho(id, delta) {
-            const item = carrinho.find(item => item.id === id);
-            if(!item) return;
-
-            item.quantidade += delta;
-            if(item.quantidade <= 0) {
-                carrinho = carrinho.filter(item => item.id !== id);
-            }
-            
-            atualizarContadorCarrinho();
-            salvarCarrinhoLocal();
-            renderizarCarrinhoDrawer();
+            const item = carrinho.find(item => item.id === id); if(!item) return;
+            item.quantidade += delta; if(item.quantidade <= 0) { carrinho = carrinho.filter(item => item.id !== id); }
+            atualizarContadorCarrinho(); salvarCarrinhoLocal(); renderizarCarrinhoDrawer();
         }
 
         function atualizarContadorCarrinho() {
             const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
             const badge = document.getElementById('carrinho-contador');
-            
-            if(totalItens > 0) {
-                badge.innerText = totalItens;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            if(totalItens > 0) { badge.innerText = totalItens; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
         }
 
         function salvarCarrinhoLocal() { localStorage.setItem('kalashi_carrinho', JSON.stringify(carrinho)); }
-
-        function carregarCarrinhoLocal() {
-            const local = localStorage.getItem('kalashi_carrinho');
-            if(local) {
-                carrinho = JSON.parse(local);
-                atualizarContadorCarrinho();
-            }
-        }
+        function carregarCarrinhoLocal() { const local = localStorage.getItem('kalashi_carrinho'); if(local) { carrinho = JSON.parse(local); atualizarContadorCarrinho(); } }
 
         function renderizarCarrinhoDrawer() {
             const container = document.getElementById('carrinho-itens-lista');
             const txtTotal = document.getElementById('carrinho-preco-total');
-            
             if(carrinho.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 text-gray-400 text-xs uppercase tracking-wider">
-                        <i class="fas fa-shopping-basket text-3xl mb-3 block"></i>Carrinho Vazio
-                    </div>
-                `;
-                txtTotal.innerText = "R$ 0,00";
-                return;
+                container.innerHTML = `<div class="text-center py-12 text-gray-400 text-xs uppercase tracking-wider"><i class="fas fa-shopping-basket text-3xl mb-3 block"></i>Carrinho Vazio</div>`;
+                txtTotal.innerText = "R$ 0,00"; return;
             }
-
-            container.innerHTML = "";
-            let subtotal = 0;
-
+            container.innerHTML = ""; let subtotal = 0;
             carrinho.forEach(item => {
-                const totalItem = item.preco * item.quantidade;
-                subtotal += totalItem;
-
+                subtotal += item.preco * item.quantidade;
                 container.innerHTML += `
                     <div class="flex items-center justify-between border-b border-gray-50 pb-3 gap-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gray-50 border rounded-xl flex items-center justify-center text-gray-400">
-                                <i class="fas ${item.icone}"></i>
-                            </div>
+                            <div class="w-10 h-10 bg-gray-50 border rounded-xl flex items-center justify-center text-gray-400"><i class="fas ${item.icone}"></i></div>
                             <div>
                                 <h4 class="text-xs font-bold text-gray-900 leading-tight">${item.nome}</h4>
                                 <span class="text-[11px] text-gray-400">R$ ${item.preco.toFixed(2)}</span>
@@ -719,212 +832,107 @@
                     </div>
                 `;
             });
-
             txtTotal.innerText = `R$ ${subtotal.toFixed(2)}`;
         }
 
         function prosseguirParaCheckout() {
-            if(carrinho.length === 0) {
-                alert("Seu carrinho está vazio!");
-                return;
-            }
-            if(!usuarioLogado) {
-                alert("Para concluir o pedido, realize login ou crie uma conta.");
-                alternarCarrinho();
-                abrirModalAuth('login');
-                return;
-            }
-            alternarCarrinho();
-            renderizarTelaCheckout();
+            if(carrinho.length === 0) return;
+            if(!usuarioLogado) { alternarCarrinho(); abrirModalAuth('login'); return; }
+            alternarCarrinho(); renderizarTelaCheckout();
         }
 
         function renderizarTelaCheckout() {
             let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-
             document.getElementById('conteudo-principal').innerHTML = `
                 <div class="max-w-3xl mx-auto px-4 py-12 w-full">
-                    <button onclick="window.location.reload();" class="mb-6 flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black transition">
-                        <i class="fas fa-arrow-left"></i> Cancelar e Voltar
-                    </button>
+                    <button onclick="window.location.reload();" class="mb-6 flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black transition"><i class="fas fa-arrow-left"></i> Voltar</button>
                     <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="md:col-span-2 space-y-6">
                             <div class="border border-gray-200 rounded-2xl p-5 space-y-3">
                                 <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço de Destino</h4>
                                 <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-200">${usuarioLogado.endereco}</div>
                             </div>
-
                             <div class="border border-gray-200 rounded-2xl p-5">
-                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700 mb-3"><i class="fas fa-list-ol mr-1"></i> Resumo dos Itens</h4>
+                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700 mb-3"><i class="fas fa-list-ol mr-1"></i> Resumo</h4>
                                 <div class="space-y-2 text-xs text-gray-600">
-                                    ${carrinho.map(item => `
-                                        <div class="flex justify-between border-b border-gray-50 pb-1">
-                                            <span>${item.quantidade}x ${item.nome}</span>
-                                            <span class="font-bold text-gray-900">R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
-                                        </div>
-                                    `).join('')}
+                                    ${carrinho.map(item => `<div class="flex justify-between border-b border-gray-50 pb-1"><span>${item.quantidade}x ${item.nome}</span><span class="font-bold text-gray-900">R$ ${(item.preco * item.quantidade).toFixed(2)}</span></div>`).join('')}
                                 </div>
                             </div>
                         </div>
-
                         <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 h-fit space-y-4">
-                            <div class="text-sm font-bold text-gray-500 uppercase">Total Geral</div>
+                            <div class="text-sm font-bold text-gray-500 uppercase">Total</div>
                             <div class="text-3xl font-black font-serif-kalashi text-black">R$ ${subtotal.toFixed(2)}</div>
-                            <button id="btn-finalizar-pedido" onclick="executarCompraCarrinhoNuvem()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition active:scale-95 hover:bg-gray-800">Fechar Pedido</button>
+                            <button id="btn-finalizar-pedido" onclick="executarCompraCarrinhoNuvem()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition hover:bg-gray-800">Fechar Pedido</button>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        async function ejecutarCompraCarrinhoNuvem() {
+        async function executarCompraCarrinhoNuvem() {
             const btn = document.getElementById('btn-finalizar-pedido');
-            if(btn) { btn.innerText = "GRAVANDO PEDIDO..."; btn.disabled = true; }
-
+            if(btn) btn.disabled = true;
             const numeroAleatorio = Math.floor(100000 + Math.random() * 900000);
             const codigoRastreio = `KL-${numeroAleatorio}-BR`;
             let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
             let nomesProdutos = carrinho.map(item => `${item.quantidade}x ${item.nome}`).join(' | ');
 
-            const payloadPedido = {
-                numero_pedido: codigoRastreio,
-                cliente_email: usuarioLogado.email,
-                cliente_nome: usuarioLogado.nome,
-                produto_nome: nomesProdutos,
-                valor_total: parseFloat(subtotal),
-                endereco_entrega: usuarioLogado.endereco,
-                status: "Processando"
-            };
-
             try {
                 await fetch(`${SUPABASE_URL}/rest/v1/pedidos`, {
                     method: "POST",
-                    headers: {
-                        "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payloadPedido)
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ numero_pedido: codigoRastreio, cliente_email: usuarioLogado.email, cliente_nome: usuarioLogado.nome, produto_nome: nomesProdutos, valor_total: parseFloat(subtotal), endereco_entrega: usuarioLogado.endereco, status: "Processando" })
                 });
-
-                carrinho = [];
-                salvarCarrinhoLocal();
-                atualizarContadorCarrinho();
-
-                document.getElementById('conteudo-principal').innerHTML = `
-                    <div class="max-w-md mx-auto px-4 py-16 text-center space-y-6">
-                        <div class="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto text-2xl shadow-lg"><i class="fas fa-check"></i></div>
-                        <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wide">Pedido Realizado!</h2>
-                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 text-left text-sm space-y-2">
-                            <div><strong>Código de Rastreio:</strong> <span class="font-mono bg-gray-200 px-2 py-0.5 rounded">${codigoRastreio}</span></div>
-                            <div><strong>Destinatário:</strong> ${usuarioLogado.nome}</div>
-                        </div>
-                        <p class="text-[11px] text-gray-400">Verifique os detalhes na aba "Meus Pedidos".</p>
-                        <button onclick="window.location.reload();" class="w-full bg-black text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition">Voltar ao Início</button>
-                    </div>
-                `;
-
-            } catch (err) {
-                alert("Erro ao processar checkout.");
-                if(btn) { btn.innerText = "Fechar Pedido"; btn.disabled = false; }
-            }
+                carrinho = []; salvarCarrinhoLocal(); atualizarContadorCarrinho();
+                window.location.reload();
+            } catch (err) { alert("Erro ao fechar transação."); }
         }
 
-        /* HISTÓRICO DE MEUS PEDIDOS */
         async function carregarHistoricoPedidos() {
             const container = document.getElementById('lista-pedidos-usuario');
-            if(!usuarioLogado) {
-                container.innerHTML = `
-                    <div class="text-center py-12 border border-dashed border-gray-200 rounded-2xl bg-gray-50">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider mb-3">Conecte-se para ver seu histórico</p>
-                        <button onclick="abrirModalAuth('login')" class="bg-black text-white px-4 py-2 rounded-xl text-xs uppercase font-bold tracking-widest">Entrar</button>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = `<div class="text-center text-xs text-gray-400 uppercase tracking-widest">Buscando histórico na nuvem...</div>`;
-
+            if(!usuarioLogado) { container.innerHTML = `<div class="text-center py-8 text-xs text-gray-400">Faça login para ver seu histórico.</div>`; return; }
+            container.innerHTML = `<div class="text-center text-xs text-gray-400 uppercase">Buscando na nuvem...</div>`;
             try {
                 const url = `${SUPABASE_URL}/rest/v1/pedidos?cliente_email=eq.${encodeURIComponent(usuarioLogado.email)}&order=id.desc`;
-                const resposta = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
-                const pedidos = await resposta.json();
-
-                if(!pedidos || pedidos.length === 0) {
-                    container.innerHTML = `<div class="text-center text-xs text-gray-400 uppercase py-8">Nenhuma compra localizada neste perfil.</div>`;
-                    return;
-                }
-
+                const res = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
+                const pedidos = await res.json();
+                if(!pedidos || pedidos.length === 0) { container.innerHTML = `<div class="text-center text-xs text-gray-400 py-8">Nenhum pedido localizado.</div>`; return; }
                 container.innerHTML = "";
                 pedidos.forEach(p => {
                     container.innerHTML += `
-                        <div class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                            <div class="flex flex-wrap justify-between items-center gap-2 border-b border-gray-100 pb-2.5">
-                                <div>
-                                    <span class="text-[10px] text-gray-400 uppercase font-bold block">Código Identificador</span>
-                                    <span class="font-mono bg-gray-100 text-gray-900 px-2 py-0.5 rounded text-xs font-bold">${p.numero_pedido}</span>
-                                </div>
-                                <span class="bg-black text-white text-[9px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">${p.status || 'Processando'}</span>
+                        <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm space-y-3">
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <div><span class="text-[10px] text-gray-400 block font-bold">Identificador</span><span class="font-mono bg-gray-100 px-2 py-0.5 rounded text-xs font-bold">${p.numero_pedido}</span></div>
+                                <span class="bg-black text-white text-[9px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">${p.status}</span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                <div>
-                                    <span class="text-gray-400 uppercase font-bold text-[10px] block">Itens do Pedido</span>
-                                    <span class="text-gray-900 font-medium">${p.produto_nome}</span>
-                                </div>
-                                <div class="sm:text-right">
-                                    <span class="text-gray-400 uppercase font-bold text-[10px] block">Valor Pago</span>
-                                    <span class="text-gray-900 font-black text-sm">R$ ${parseFloat(p.valor_total).toFixed(2)}</span>
-                                </div>
+                                <div><span class="text-gray-400 font-bold block text-[10px]">Itens</span><span class="text-gray-900">${p.produto_nome}</span></div>
+                                <div class="sm:text-right"><span class="text-gray-400 font-bold block text-[10px]">Pago</span><span class="text-gray-900 font-black">R$ ${parseFloat(p.valor_total).toFixed(2)}</span></div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-
-            } catch (err) {
-                container.innerHTML = `<div class="text-center text-xs text-red-500 uppercase">Falha na varredura de dados.</div>`;
-            }
+            } catch (err) { container.innerHTML = `<div class="text-center text-xs text-red-500">Erro na busca.</div>`; }
         }
 
-        /* RASTREIO INDIVIDUAL */
-        function abrirRastreio() {
-            document.getElementById('modal-rastreio').classList.remove('hidden');
-            document.getElementById('resultado-rastreio').classList.add('hidden');
-            document.getElementById('erro-rastreio').classList.add('hidden');
-            document.getElementById('codigo-rastreio-input').value = "";
-            document.getElementById('codigo-rastreio-input').focus();
-        }
-
+        function abrirRastreio() { document.getElementById('modal-rastreio').classList.remove('hidden'); }
         function fecharRastreio() { document.getElementById('modal-rastreio').classList.add('hidden'); }
-
-        async function ejecutarRastreio() {
+        async function executarRastreio() {
             const codigo = document.getElementById('codigo-rastreio-input').value.trim().toUpperCase();
-            const btn = document.getElementById('btn-rastreio-submit');
-            
-            document.getElementById('resultado-rastreio').classList.add('hidden');
-            document.getElementById('erro-rastreio').classList.add('hidden');
-
-            if (!codigo) return;
-            btn.innerText = "PESQUISANDO REDE..."; btn.disabled = true;
-
+            if(!codigo) return;
             try {
                 const url = `${SUPABASE_URL}/rest/v1/pedidos?numero_pedido=eq.${encodeURIComponent(codigo)}`;
-                const resposta = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
-                const dados = await resposta.json();
-
-                if (dados && dados.length > 0) {
+                const res = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
+                const dados = await res.json();
+                if(dados && dados.length > 0) {
                     const p = dados[0];
-                    document.getElementById('rastreio-status').innerText = p.status || "Processando";
+                    document.getElementById('rastreio-status').innerText = p.status;
                     document.getElementById('rastreio-produto').innerText = p.produto_nome;
                     document.getElementById('rastreio-cliente').innerText = p.cliente_nome;
                     document.getElementById('rastreio-endereco').innerText = p.endereco_entrega;
                     document.getElementById('resultado-rastreio').classList.remove('hidden');
-                } else {
-                    document.getElementById('erro-rastreio').classList.remove('hidden');
-                }
-            } catch (err) { console.error(err); }
-
-            btn.innerText = "Buscar na Rede"; btn.disabled = false;
+                } else { document.getElementById('erro-rastreio').classList.remove('hidden'); }
+            } catch(e){}
         }
 
         checarSessao();
