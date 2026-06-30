@@ -13,24 +13,16 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Efeito de Brilho Espelhado Passando Devagar */
-        .text-shine {
-            background: linear-gradient(to right, #000 20%, #888 40%, #fff 50%, #888 60%, #000 80%);
-            background-size: 200% auto;
-            color: #000;
-            background-clip: text;
-            text-fill-color: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 4.5s linear infinite;
+        /* Efeito de Iluminação Metálica Premium e Suave */
+        .text-premium-chrome {
+            color: #000000;
+            letter-spacing: 0.05em;
+            text-shadow: 0px 1px 1px rgba(255,255,255,0.8);
+            animation: pulse-glow 4s ease-in-out infinite;
         }
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
-        .glass-premium {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,0,0,0.2)); }
         }
     </style>
 </head>
@@ -50,25 +42,31 @@
     <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-40 w-full transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center gap-4">
             
-            <!-- ESQUERDA: LOGO + TEXTO BRILHANTE -->
+            <!-- ESQUERDA: LOGO EXATA DA IMAGEM VETORIZADA -->
             <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload();">
-                <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center p-1 shadow-md hover:scale-105 transition-transform">
-                    <svg viewBox="0 0 500 500" class="w-full h-full text-white" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="250" cy="250" r="240" fill="black" />
-                        <rect x="50" y="150" width="40" height="200" rx="8" fill="none" stroke="white" stroke-width="20" />
-                        <path d="M52 190 L88 160 M52 240 L88 210 M52 290 L88 260 M52 340 L88 310" stroke="white" stroke-width="16" stroke-linecap="round" />
-                        <path d="M70 115 C88 115 88 150 70 150 C52 150 52 115 70 115 Z" fill="white" />
-                        <path d="M50 350 L90 350 L82 380 L58 380 Z" fill="white" />
+                <div class="w-12 h-12 flex items-center justify-center hover:scale-105 transition-transform duration-300 drop-shadow-sm">
+                    <svg viewBox="0 0 500 500" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="250" cy="250" r="230" fill="white" />
+                        <g transform="translate(45, 0)">
+                            <rect x="50" y="180" width="35" height="150" rx="4" fill="none" stroke="black" stroke-width="15" />
+                            <path d="M52 215 L83 188 M52 255 L83 228 M52 295 L83 268 M52 323 L83 296" stroke="black" stroke-width="14" stroke-linecap="square" />
+                            <path d="M67.5 142 C85 142 85 180 67.5 180 C50 180 50 142 67.5 142 Z" fill="none" stroke="black" stroke-width="12" />
+                            <path d="M54 167 Q67.5 152 81 167" stroke="black" stroke-width="8" fill="none" />
+                            <path d="M50 330 L85 330 L77 355 L58 355 Z" fill="black" />
+                        </g>
+                        <text x="135" y="225" font-family="'Cinzel', 'Georgia', serif" font-size="52" font-weight="bold" fill="black" letter-spacing="-1">KALASHI</text>
+                        <text x="135" y="285" font-family="'Cinzel', 'Georgia', serif" font-size="68" font-weight="900" fill="black" letter-spacing="0">BARBER</text>
+                        <text x="138" y="325" font-family="'Courier New', monospace" font-size="24" font-weight="bold" fill="black" letter-spacing="8">CLUB</text>
                     </svg>
                 </div>
-                <span class="font-serif-kalashi font-black text-sm sm:text-lg tracking-wider uppercase text-shine block select-none">
-                    Kalashi Barber Shop
+                <span class="font-serif-kalashi font-black text-base sm:text-xl text-premium-chrome block select-none">
+                    KALASHI BARBER SHOP
                 </span>
             </div>
 
-            <!-- DIREITA: INSTRUMENTOS, AUTH E MENU -->
+            <!-- DIREITA: AUTH, CARRINHO E SELETOR -->
             <div class="flex items-center gap-2 sm:gap-4">
-                <div id="area-auth-topo" class="text-xs font-bold uppercase tracking-wider text-gray-700 mr-2">
+                <div id="area-auth-topo" class="text-xs font-black uppercase tracking-wider text-gray-700 mr-2 whitespace-nowrap">
                     <span class="text-gray-400 animate-pulse">Carregando...</span>
                 </div>
 
@@ -77,7 +75,6 @@
                     <span id="carrinho-contador" class="absolute -top-0.5 -right-0.5 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden shadow-sm">0</span>
                 </button>
 
-                <!-- BOTÃO 3 BARRINHAS -->
                 <button onclick="alternarMenuNavegacao()" class="p-2 text-gray-700 hover:text-black transition-colors rounded-xl hover:bg-gray-100">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
@@ -86,7 +83,7 @@
         </div>
     </header>
 
-    <!-- SIDEBAR DRAWER DE NAVEGAÇÃO (3 BARRINHAS) -->
+    <!-- SIDEBAR DRAWER DE NAVEGAÇÃO -->
     <div id="drawer-menu" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="alternarMenuNavegacao()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-xs bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100 transition-all">
@@ -104,7 +101,7 @@
                 </nav>
             </div>
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center border-t border-gray-100 pt-4">
-                Kalashi Barber v2.0
+                Kalashi Barber v2.2
             </div>
         </div>
     </div>
@@ -309,7 +306,7 @@
             
             <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
-            </main>
+            </section>
         </div>
 
         <!-- MEUS PEDIDOS -->
@@ -588,7 +585,7 @@
 
             if (cep.length === 8) {
                 const estado = document.getElementById('perf-estado').value;
-                const city = document.getElementById('perf-cidade').value;
+                const cidade = document.getElementById('perf-cidade').value;
                 const rua = document.getElementById('perf-rua').value.trim();
                 const numero = document.getElementById('perf-numero').value.trim();
                 const bairro = document.getElementById('perf-bairro').value.trim();
@@ -596,7 +593,7 @@
                 
                 enderecoFinal = `${rua}, Nº ${numero}`;
                 if(complemento) enderecoFinal += ` (${complemento})`;
-                enderecoFinal += ` - Bairro ${bairro}, ${city}/${estado} - CEP: ${cep}`;
+                enderecoFinal += ` - Bairro ${bairro}, ${cidade}/${estado} - CEP: ${cep}`;
             }
 
             try {
@@ -616,14 +613,14 @@
                     const dadosAtualizados = await res.json();
                     salvarSessao(dadosAtualizados[0]);
                     alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-green-50 border border-green-200 text-green-700";
-                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Dados atualizados com sucesso em nuvem!</span>`;
+                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Dados atualizados com sucesso!</span>`;
                     alerta.classList.remove('hidden');
                 } else {
                     throw new Error();
                 }
             } catch (err) {
                 alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-red-50 border border-red-200 text-red-700";
-                alerta.innerHTML = `<i class="fas fa-times-circle"></i><span>Erro na comunicação com a base de dados central.</span>`;
+                alerta.innerHTML = `<i class="fas fa-times-circle"></i><span>Erro na comunicação com a base de dados.</span>`;
                 alerta.classList.remove('hidden');
             }
 
@@ -709,7 +706,7 @@
             
             const cep = document.getElementById('cad-cep').value.trim();
             const estado = document.getElementById('cad-estado').value;
-            const city = document.getElementById('cad-cidade').value;
+            const cidade = document.getElementById('cad-cidade').value;
             const rua = document.getElementById('cad-rua').value.trim();
             const numero = document.getElementById('cad-numero').value.trim();
             const bairro = document.getElementById('cad-bairro').value.trim();
@@ -717,7 +714,7 @@
             
             let enderecoCompleto = `${rua}, Nº ${numero}`;
             if(complemento) enderecoCompleto += ` (${complemento})`;
-            enderecoCompleto += ` - Bairro ${bairro}, ${city}/${estado} - CEP: ${cep}`;
+            enderecoCompleto += ` - Bairro ${bairro}, ${cidade}/${estado} - CEP: ${cep}`;
 
             try {
                 const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
@@ -802,7 +799,7 @@
             mudarAbaAuth('login');
         }
 
-        function ejecutarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
+        function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
         function renderizarVitrine() {
             const grid = document.querySelector('#produtos > div');
