@@ -58,8 +58,8 @@
         </div>
     </header>
 
-    <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
+    <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-gray-100 shadow-2xl relative my-8">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
             
             <div id="abas-auth" class="flex border-b border-gray-200 mb-6 text-sm font-bold uppercase tracking-wider">
@@ -89,19 +89,65 @@
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Nome Completo</label>
                     <input type="text" id="cad-nome" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail</label>
-                    <input type="email" id="cad-email" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail</label>
+                        <input type="email" id="cad-email" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Criar Senha</label>
+                        <input type="password" id="cad-senha" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                    </div>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Criar Senha</label>
-                    <input type="password" id="cad-senha" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+
+                <div class="border-t border-gray-100 pt-4 mt-2">
+                    <span class="text-[11px] font-black text-black uppercase tracking-widest block mb-3"><i class="fas fa-map-marker-alt mr-1"></i> Endereço de Entrega</span>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">CEP (Apenas Números)</label>
+                            <input type="text" id="cad-cep" maxlength="8" placeholder="00000000" oninput="consultarMecanismoCEP()" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm font-mono tracking-wider outline-none focus:border-black">
+                        </div>
+                        <div class="space-y-1 sm:col-span-2">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Estado (UF)</label>
+                            <select id="cad-estado" onchange="carregarCidadesPorEstadoIBGE()" required class="w-full border border-gray-300 bg-white rounded-xl px-3 py-2.5 text-sm outline-none focus:border-black">
+                                <option value="">Selecione o Estado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 mb-3">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Cidade</label>
+                        <select id="cad-cidade" required class="w-full border border-gray-300 bg-white rounded-xl px-3 py-2.5 text-sm outline-none focus:border-black">
+                            <option value="">Selecione a Cidade</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+                        <div class="space-y-1 sm:col-span-2">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Logradouro / Rua</label>
+                            <input type="text" id="cad-rua" required placeholder="Ex: Av. Paulista" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Número</label>
+                            <input type="text" id="cad-numero" required placeholder="Nº" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Bairro</label>
+                            <input type="text" id="cad-bairro" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Complemento (Opcional)</label>
+                            <input type="text" id="cad-complemento" placeholder="Ex: Ap 42, Bloco B" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
+                        </div>
+                    </div>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Endereço de Entrega Principal</label>
-                    <input type="text" id="cad-endereco" required placeholder="Ex: Rua das Flores, 123 - Centro" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black">
-                </div>
-                <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Criar Minha Conta</button>
+
+                <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Criar Minha Conta</button>
             </form>
 
             <div id="fluxo-verificacao-email" class="hidden text-center space-y-4 py-2">
@@ -170,14 +216,13 @@
 
     <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm shadow-inner" onclick="alternarCarrinho()"></div>
-        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100 transition-transform duration-300">
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-l-gray-100">
             <div>
                 <div class="flex justify-between items-center pb-4 border-b border-gray-100">
                     <h3 class="text-base font-serif-kalashi font-black uppercase tracking-wider text-gray-900"><i class="fas fa-shopping-bag mr-2"></i> Seu Carrinho</h3>
                     <button onclick="alternarCarrinho()" class="text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
                 </div>
-                <div id="carrinho-itens-lista" class="mt-4 space-y-4 overflow-y-auto max-h-[60vh] pr-1 no-scrollbar">
-                    </div>
+                <div id="carrinho-itens-lista" class="mt-4 space-y-4 overflow-y-auto max-h-[60vh] pr-1 no-scrollbar"></div>
             </div>
 
             <div class="border-t border-gray-100 pt-4 bg-white space-y-4">
@@ -215,8 +260,7 @@
 
         <div id="painel-pedidos" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
             <h2 class="text-xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Histórico de Compras</h2>
-            <div id="lista-pedidos-usuario" class="space-y-4">
-                </div>
+            <div id="lista-pedidos-usuario" class="space-y-4"></div>
         </div>
 
     </div>
@@ -240,6 +284,7 @@
         let carrinho = [];
         let codigoGeradoMFA = null;
         let dadosUsuarioTemporario = null;
+        let listaEstadosGlobais = [];
 
         function checarSessao() {
             const sessao = localStorage.getItem('kalashi_global_session');
@@ -253,6 +298,96 @@
             }
             renderizarComponentesAuth();
             carregarCarrinhoLocal();
+            carregarEstadosIBGE();
+        }
+
+        /* ENGENHARIA DE LOCALIZAÇÃO COMPLEXA: IBGE + VIACEP */
+        async function carregarEstadosIBGE() {
+            try {
+                const res = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados");
+                const dados = await res.json();
+                // Ordenação Alfabética estrita por nome do Estado
+                listaEstadosGlobais = dados.sort((a, b) => a.nome.localeCompare(b.nome));
+                
+                const seletor = document.getElementById('cad-estado');
+                if(seletor) {
+                    seletor.innerHTML = '<option value="">Selecione o Estado</option>';
+                    listaEstadosGlobais.forEach(est => {
+                        seletor.innerHTML += `<option value="${est.sigla}" data-id="${est.id}">${est.nome} (${est.sigla})</option>`;
+                    });
+                }
+            } catch (err) { console.error("Erro ao consumir API do IBGE (Estados)."); }
+        }
+
+        async function carregarCidadesPorEstadoIBGE(nomeCidadePrePreenchida = "") {
+            const seletorEstado = document.getElementById('cad-estado');
+            const seletorCidade = document.getElementById('cad-cidade');
+            if(!seletorEstado || !seletorCidade) return;
+
+            const opcaoSelecionada = seletorEstado.options[seletorEstado.selectedIndex];
+            const estadoId = opcaoSelecionada.getAttribute('data-id');
+
+            if(!estadoId) {
+                seletorCidade.innerHTML = '<option value="">Selecione a Cidade</option>';
+                return;
+            }
+
+            seletorCidade.innerHTML = '<option value="">Carregando Cidades...</option>';
+
+            try {
+                const res = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`);
+                const cidades = await res.json();
+                // Ordenação Alfabética das cidades correspondentes
+                const cidadesOrdenadas = cidades.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                seletorCidade.innerHTML = '<option value="">Selecione a Cidade</option>';
+                cidadesOrdenadas.forEach(cid => {
+                    const selected = cid.nome.toLowerCase() === nomeCidadePrePreenchida.toLowerCase() ? 'selected' : '';
+                    seletorCidade.innerHTML += `<option value="${cid.nome}" ${selected}>${cid.nome}</option>`;
+                });
+            } catch (err) {
+                seletorCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+            }
+        }
+
+        async function consultarMecanismoCEP() {
+            const cep = document.getElementById('cad-cep').value.replace(/\D/g, '');
+            if(cep.length !== 8) return;
+
+            const inputRua = document.getElementById('cad-rua');
+            const inputBairro = document.getElementById('cad-bairro');
+            const seletorEstado = document.getElementById('cad-estado');
+
+            inputRua.value = "Buscando...";
+            inputBairro.value = "Buscando...";
+
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await res.json();
+
+                if(dados.erro) {
+                    alert("CEP não localizado na base dos Correios.");
+                    inputRua.value = "";
+                    inputBairro.value = "";
+                    return;
+                }
+
+                inputRua.value = dados.logradouro || "";
+                inputBairro.value = dados.bairro || "";
+                
+                // Mapeia e sincroniza o estado selecionado automaticamente
+                if(dados.uf) {
+                    seletorEstado.value = dados.uf;
+                    // Dispara a carga de cidades em ordem alfabética e seleciona a cidade vinda do CEP
+                    await carregarCidadesPorEstadoIBGE(dados.localidade || "");
+                }
+
+                document.getElementById('cad-numero').focus();
+            } catch(err) {
+                console.error("Falha na varredura do ViaCEP");
+                inputRua.value = "";
+                inputBairro.value = "";
+            }
         }
 
         function salvarSessao(usuario) {
@@ -302,13 +437,11 @@
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = mensagemHtml;
+            textoAlerta.innerHTML = messageHtml || mensagemHtml;
             divAlerta.classList.remove('hidden');
         }
 
-        function ocultarErroAuth() {
-            document.getElementById('alerta-auth').classList.add('hidden');
-        }
+        function ocultarErroAuth() { document.getElementById('alerta-auth').classList.add('hidden'); }
 
         function abrirModalAuth(aba = 'login') {
             document.getElementById('modal-auth').classList.remove('hidden');
@@ -344,7 +477,19 @@
             const nome = document.getElementById('cad-nome').value;
             const email = document.getElementById('cad-email').value.toLowerCase().trim();
             const senha = document.getElementById('cad-senha').value;
-            const endereco = document.getElementById('cad-endereco').value;
+            
+            // CONCATENAÇÃO INTELIGENTE DO NOVO ENDEREÇO ESTRUTURADO
+            const cep = document.getElementById('cad-cep').value.trim();
+            const estado = document.getElementById('cad-estado').value;
+            const cidade = document.getElementById('cad-cidade').value;
+            const rua = document.getElementById('cad-rua').value.trim();
+            const numero = document.getElementById('cad-numero').value.trim();
+            const bairro = document.getElementById('cad-bairro').value.trim();
+            const complemento = document.getElementById('cad-complemento').value.trim();
+            
+            let enderecoCompleto = `${rua}, Nº ${numero}`;
+            if(complemento) enderecoCompleto += ` (${complemento})`;
+            enderecoCompleto += ` - Bairro ${bairro}, ${cidade}/${estado} - CEP: ${cep}`;
 
             try {
                 const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
@@ -367,7 +512,7 @@
                         "Content-Type": "application/json",
                         "Prefer": "return=representation"
                     },
-                    body: JSON.stringify({ nome, email, senha, endereco })
+                    body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto })
                 });
 
                 if (respostaSalvar.ok) {
@@ -493,8 +638,6 @@
 
             atualizarContadorCarrinho();
             salvarCarrinhoLocal();
-            
-            // Efeito visual rápido de feedback
             alert(`"${prod.nome}" foi adicionado ao seu carrinho.`);
         }
 
@@ -524,9 +667,7 @@
             }
         }
 
-        function salvarCarrinhoLocal() {
-            localStorage.setItem('kalashi_carrinho', JSON.stringify(carrinho));
-        }
+        function salvarCarrinhoLocal() { localStorage.setItem('kalashi_carrinho', JSON.stringify(carrinho)); }
 
         function carregarCarrinhoLocal() {
             const local = localStorage.getItem('kalashi_carrinho');
@@ -593,14 +734,12 @@
                 abrirModalAuth('login');
                 return;
             }
-
             alternarCarrinho();
             renderizarTelaCheckout();
         }
 
         function renderizarTelaCheckout() {
             let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-            let descricaoProdutos = carrinho.map(item => `${item.quantidade}x ${item.nome}`).join(', ');
 
             document.getElementById('conteudo-principal').innerHTML = `
                 <div class="max-w-3xl mx-auto px-4 py-12 w-full">
@@ -639,7 +778,7 @@
             `;
         }
 
-        async function executarCompraCarrinhoNuvem() {
+        async function ejecutarCompraCarrinhoNuvem() {
             const btn = document.getElementById('btn-finalizar-pedido');
             if(btn) { btn.innerText = "GRAVANDO PEDIDO..."; btn.disabled = true; }
 
@@ -669,7 +808,6 @@
                     body: JSON.stringify(payloadPedido)
                 });
 
-                // Limpar carrinho após sucesso
                 carrinho = [];
                 salvarCarrinhoLocal();
                 atualizarContadorCarrinho();
@@ -710,9 +848,7 @@
 
             try {
                 const url = `${SUPABASE_URL}/rest/v1/pedidos?cliente_email=eq.${encodeURIComponent(usuarioLogado.email)}&order=id.desc`;
-                const resposta = await fetch(url, {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-                });
+                const resposta = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
                 const pedidos = await resposta.json();
 
                 if(!pedidos || pedidos.length === 0) {
@@ -761,7 +897,7 @@
 
         function fecharRastreio() { document.getElementById('modal-rastreio').classList.add('hidden'); }
 
-        async function executarRastreio() {
+        async function ejecutarRastreio() {
             const codigo = document.getElementById('codigo-rastreio-input').value.trim().toUpperCase();
             const btn = document.getElementById('btn-rastreio-submit');
             
