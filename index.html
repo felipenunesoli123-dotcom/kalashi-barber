@@ -119,6 +119,51 @@
         </div>
     </div>
 
+    <div id="modal-rastreio" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
+            <button onclick="fecharRastreio()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
+            
+            <div class="text-center space-y-2 mb-6">
+                <h3 class="text-lg font-serif-kalashi font-black uppercase tracking-wider text-gray-900">Rastrear Objeto</h3>
+                <p class="text-xs text-gray-500">Insira o código identificador para localizar sua compra.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Código de Rastreio</label>
+                    <input type="text" id="codigo-rastreio-input" placeholder="Ex: KL-000000-BR" class="w-full uppercase border border-gray-300 rounded-xl px-4 py-3 text-sm font-mono tracking-wider outline-none focus:border-black">
+                </div>
+                <button onclick="executarRastreio()" id="btn-rastreio-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl hover:bg-gray-800 transition">Buscar na Rede</button>
+            </div>
+
+            <div id="resultado-rastreio" class="hidden mt-6 pt-6 border-t border-gray-100 space-y-4 text-sm">
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-500 uppercase">Status do Pedido:</span>
+                        <span id="rastreio-status" class="bg-black text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">Processando</span>
+                    </div>
+                    <div class="border-t border-gray-200 my-2 pt-2">
+                        <p class="text-xs text-gray-400 uppercase font-bold">Produto</p>
+                        <p id="rastreio-produto" class="font-serif-kalashi font-bold text-gray-900 mt-0.5"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase font-bold">Destinatário</p>
+                        <p id="rastreio-cliente" class="text-gray-700 mt-0.5"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase font-bold">Endereço de Entrega</p>
+                        <p id="rastreio-endereco" class="text-gray-600 text-xs mt-0.5"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="erro-rastreio" class="hidden mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
+                <i class="fas fa-exclamation-circle text-sm shrink-0"></i>
+                <span>Nenhum pedido encontrado com este código identificador.</span>
+            </div>
+        </div>
+    </div>
+
     <div id="conteudo-principal">
         <section class="bg-gray-50 border-b border-gray-100 py-12 sm:py-16 text-center px-4 w-full">
             <div class="max-w-3xl mx-auto">
@@ -195,7 +240,7 @@
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = mensajeHtml;
+            textoAlerta.innerHTML = mensagemHtml;
             divAlerta.classList.remove('hidden');
         }
 
@@ -415,7 +460,6 @@
             window.scrollTo(0,0);
         }
 
-        // RECONEXÃO LIMPA DA TRANSMISSÃO EM NUVEM
         async function finalizarPedidoCheckout() {
             const btn = document.getElementById('btn-finalizar-pedido');
             if(btn) {
@@ -426,7 +470,6 @@
             const numeroAleatorio = Math.floor(100000 + Math.random() * 900000);
             const codigoRastreio = `KL-${numeroAleatorio}-BR`;
             
-            // Payload 100% mapeado com a tabela pedidos do Supabase
             const payloadPedido = {
                 numero_pedido: codigoRastreio,
                 cliente_email: usuarioLogado.email,
@@ -463,6 +506,57 @@
                     <button onclick="window.location.reload();" class="w-full bg-black text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition">Voltar ao Início</button>
                 </div>
             `;
+        }
+
+        // ENGENHARIA DE RASTREAMENTO: COMUNICAÇÃO DE BUSCA E MAPEAMENTO NA NUVEM
+        function abrirRastreio() {
+            document.getElementById('modal-rastreio').classList.remove('hidden');
+            document.getElementById('resultado-rastreio').classList.add('hidden');
+            document.getElementById('erro-rastreio').classList.add('hidden');
+            document.getElementById('codigo-rastreio-input').value = "";
+            document.getElementById('codigo-rastreio-input').focus();
+        }
+
+        function fecharRastreio() {
+            document.getElementById('modal-rastreio').classList.add('hidden');
+        }
+
+        async function executarRastreio() {
+            const codigo = document.getElementById('codigo-rastreio-input').value.trim().toUpperCase();
+            const btn = document.getElementById('btn-rastreio-submit');
+            
+            document.getElementById('resultado-rastreio').classList.add('hidden');
+            document.getElementById('erro-rastreio').classList.add('hidden');
+
+            if (!codigo) return;
+
+            btn.innerText = "PESQUISANDO REDE...";
+            btn.disabled = true;
+
+            try {
+                const url = `${SUPABASE_URL}/rest/v1/pedidos?numero_pedido=eq.${encodeURIComponent(codigo)}`;
+                const resposta = await fetch(url, {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+                });
+                const dados = await resposta.json();
+
+                if (dados && dados.length > 0) {
+                    const pedidoFound = dados[0];
+                    document.getElementById('rastreio-status').innerText = pedidoFound.status || "Processando";
+                    document.getElementById('rastreio-produto').innerText = pedidoFound.produto_nome;
+                    document.getElementById('rastreio-cliente').innerText = pedidoFound.cliente_nome;
+                    document.getElementById('rastreio-endereco').innerText = pedidoFound.endereco_entrega;
+                    
+                    document.getElementById('resultado-rastreio').classList.remove('hidden');
+                } else {
+                    document.getElementById('erro-rastreio').classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error("Erro na busca do rastreio.");
+            }
+
+            btn.innerText = "Buscar na Rede";
+            btn.disabled = false;
         }
 
         checarSessao();
