@@ -100,7 +100,7 @@
                 </nav>
             </div>
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center border-t border-gray-100 pt-4">
-                Kalashi Barber v2.3
+                Kalashi Barber v2.4
             </div>
         </div>
     </div>
@@ -268,7 +268,7 @@
         </div>
     </div>
 
-    <!-- NAVEGAÇÃO CARRINHO -->
+    <!-- DRAWER CARRINHO -->
     <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="alternarCarrinho()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100">
@@ -438,8 +438,14 @@
         }
 
         function calcularIdadeValida(dataNascimentoString) {
+            if (!dataNascimentoString) return 0;
             const hoje = new Date();
-            const nasc = new Date(dataNascimentoString);
+            const partes = dataNascimentoString.split('-');
+            let nasc = new Date(dataNascimentoString);
+            if (partes.length !== 3) {
+                const partesBr = dataNascimentoString.split('/');
+                if (partesBr.length === 3) nasc = new Date(partesBr[2], partesBr[1] - 1, partesBr[0]);
+            }
             let idade = hoje.getFullYear() - nasc.getFullYear();
             const m = hoje.getMonth() - nasc.getMonth();
             if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
@@ -555,7 +561,11 @@
             document.getElementById('perf-nome').value = usuarioLogado.nome || "";
             document.getElementById('perf-email').value = usuarioLogado.email || "";
             document.getElementById('perf-senha').value = usuarioLogado.senha || "";
-            document.getElementById('perf-nascimento').value = usuarioLogado.data_nascimento || "";
+            
+            if (usuarioLogado.data_nascimento) {
+                const dataRaw = usuarioLogado.data_nascimento;
+                document.getElementById('perf-nascimento').value = dataRaw.includes('T') ? dataRaw.split('T')[0] : dataRaw;
+            }
         }
 
         async function atualizarDadosPerfilNuvem(e) {
@@ -567,11 +577,11 @@
             const nome = document.getElementById('perf-nome').value;
             const email = document.getElementById('perf-email').value.toLowerCase().trim();
             const senha = document.getElementById('perf-senha').value;
-            const dataNascimento = document.getElementById('perf-nascimento').value;
+            const dataNascimentoInput = document.getElementById('perf-nascimento').value;
 
-            if (calcularIdadeValida(dataNascimento) < 18) {
+            if (calcularIdadeValida(dataNascimentoInput) < 18) {
                 alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-red-50 border border-red-200 text-red-700";
-                alerta.innerHTML = `<i class="fas fa-ban"></i><span>Alteração negada. O sistema exige maioridade para manutenção de conta.</span>`;
+                alerta.innerHTML = `<i class="fas fa-ban"></i><span>Alteração negada. Menoridade identificada no sistema.</span>`;
                 alerta.classList.remove('hidden');
                 return;
             }
@@ -582,11 +592,9 @@
             const cepInput = document.getElementById('perf-cep').value.trim();
             let enderecoFinal = usuarioLogado.endereco;
 
-            // Se o campo do CEP foi preenchido e completado, monta o endereço estruturado
             if (cepInput.length === 8) {
                 const seletorEstado = document.getElementById('perf-estado');
                 const seletorCidade = document.getElementById('perf-cidade');
-                
                 const estado = seletorEstado ? seletorEstado.value : "";
                 const cidade = seletorCidade ? seletorCidade.value : "";
                 const rua = document.getElementById('perf-rua').value.trim();
@@ -611,7 +619,13 @@
                         "Content-Type": "application/json",
                         "Prefer": "return=representation"
                     },
-                    body: JSON.stringify({ nome, email, senha, data_nascimento: dataNascimento, endereco: enderecoFinal })
+                    body: JSON.stringify({ 
+                        nome, 
+                        email, 
+                        senha, 
+                        data_nascimento: dataNascimentoInput, 
+                        endereco: enderecoFinal 
+                    })
                 });
 
                 if (res.ok) {
@@ -833,7 +847,7 @@
         function adicionarAoCarrinho(id) {
             const prod = produtosDB[id];
             const itemExistente = carrinho.find(item => item.id === id);
-            if(itemExistente) { itemExistente.quantidade += 1; } else { carrinho.push({ ...prod, grandfather: true, quantidade: 1 }); }
+            if(itemExistente) { itemExistente.quantidade += 1; } else { carrinho.push({ ...prod, grandfather: true, grandmother: true, quantidade: 1 }); }
             atualizarContadorCarrinho(); salvarCarrinhoLocal(); alert(`"${prod.nome}" foi adicionado.`);
         }
 
@@ -898,21 +912,23 @@
                     <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="md:col-span-2 space-y-6">
-                            <div class="border border-gray-200 rounded-2xl p-5 space-y-3">
-                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1"></i> Endereço de Destino</h4>
-                                <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border border-gray-200">${usuarioLogado.endereco}</div>
+                            <!-- CAMPO DE ENDEREÇO TOTALMENTE EDITÁVEL E AJUSTÁVEL -->
+                            <div class="border border-gray-200 rounded-2xl p-5 space-y-3 bg-white shadow-sm">
+                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1 text-gray-400"></i> Endereço de Entrega</h4>
+                                <textarea id="checkout-endereco-input" rows="3" required class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-black bg-gray-50 font-medium text-gray-800 resize-none">${usuarioLogado.endereco || ""}</textarea>
+                                <span class="text-[10px] text-gray-400 block font-semibold">* O Senhor pode alterar ou confirmar o local de destino acima livremente.</span>
                             </div>
-                            <div class="border border-gray-200 rounded-2xl p-5">
-                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700 mb-3"><i class="fas fa-list-ol mr-1"></i> Resumo</h4>
+                            <div class="border border-gray-200 rounded-2xl p-5 bg-white shadow-sm">
+                                <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700 mb-3"><i class="fas fa-list-ol mr-1 text-gray-400"></i> Resumo</h4>
                                 <div class="space-y-2 text-xs text-gray-600">
                                     ${carrinho.map(item => `<div class="flex justify-between border-b border-gray-50 pb-1"><span>${item.quantidade}x ${item.nome}</span><span class="font-bold text-gray-900">R$ ${(item.preco * item.quantidade).toFixed(2)}</span></div>`).join('')}
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 h-fit space-y-4">
+                        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 h-fit space-y-4 shadow-sm">
                             <div class="text-sm font-bold text-gray-500 uppercase">Total</div>
                             <div class="text-3xl font-black font-serif-kalashi text-black">R$ ${subtotal.toFixed(2)}</div>
-                            <button id="btn-finalizar-pedido" onclick="executarCompraCarrinhoNuvem()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition hover:bg-gray-800">Fechar Pedido</button>
+                            <button id="btn-finalizar-pedido" onclick="executarCompraCarrinhoNuvem()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition hover:bg-gray-800 shadow-md">Fechar Pedido</button>
                         </div>
                     </div>
                 </div>
@@ -921,6 +937,13 @@
 
         async function executarCompraCarrinhoNuvem() {
             const btn = document.getElementById('btn-finalizar-pedido');
+            const enderecoDefinitivo = document.getElementById('checkout-endereco-input').value.trim();
+            
+            if(!enderecoDefinitivo) {
+                alert("Por favor, preencha o endereço de entrega, Senhor.");
+                return;
+            }
+
             if(btn) btn.disabled = true;
             const numeroAleatorio = Math.floor(100000 + Math.random() * 900000);
             const codigoRastreio = `KL-${numeroAleatorio}-BR`;
@@ -931,9 +954,18 @@
                 await fetch(`${SUPABASE_URL}/rest/v1/pedidos`, {
                     method: "POST",
                     headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({ numero_pedido: codigoRastreio, cliente_email: usuarioLogado.email, cliente_nome: usuarioLogado.nome, produto_nome: nomesProdutos, valor_total: parseFloat(subtotal), endereco_entrega: usuarioLogado.endereco, status: "Processando" })
+                    body: JSON.stringify({ 
+                        numero_pedido: codigoRastreio, 
+                        cliente_email: usuarioLogado.email, 
+                        cliente_nome: usuarioLogado.nome, 
+                        produto_nome: nomesProdutos, 
+                        valor_total: parseFloat(subtotal), 
+                        endereco_entrega: enderecoDefinitivo, 
+                        status: "Processando" 
+                    })
                 });
                 carrinho = []; salvarCarrinhoLocal(); atualizarContadorCarrinho();
+                alert(`Pedido gerado com sucesso, Senhor! Rastreio: ${codigoRastreio}`);
                 window.location.reload();
             } catch (err) { alert("Erro ao fechar transação."); }
         }
