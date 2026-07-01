@@ -20,8 +20,8 @@
             animation: pulse-glow 4s ease-in-out infinite;
         }
         @keyframes pulse-glow {
-            0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
-            50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,0,0,0.2)); }
+            0%, 100% { opacity: 0.95; fill: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
+            50% { opacity: 1; fill: drop-shadow(0 0 8px rgba(0,0,0,0.2)); }
         }
     </style>
 </head>
@@ -412,7 +412,6 @@
         const SUPABASE_URL = "https://trvrjqkowacninpqdiii.supabase.co";
         const SUPABASE_KEY = "sb_publishable_hCjMw5KmZgAI65lyVGSPhg_7RDXmi8X";
 
-        // Backup local caso a tabela nova do Supabase esteja completamente vazia
         const produtosBackupLocal = {
             1: { id: 1, categoria: "Equipamentos", nome: "Máquina de Cortar Cabelo Profissional", preco: 249.90, icone: "fa-scissors" },
             2: { id: 2, categoria: "Estilo", nome: "Pomada Modeladora Efeito Matte", preco: 45.00, icone: "fa-jar" },
@@ -420,7 +419,7 @@
             4: { id: 4, categoria: "Equipamentos", nome: "Tesoura Fio Laser Profissional", preco: 120.00, icone: "fa-cut" }
         };
 
-        let produtosDB = {}; // Será preenchido dinamicamente via Supabase
+        let produtosDB = {}; 
         let usuarioLogado = null;
         let carrinho = [];
         let codigoGeradoMFA = null;
@@ -713,7 +712,7 @@
             }
         }
 
-        async function ejecutarCadastro(e) {
+        async function executarCadastro(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
             
@@ -825,9 +824,11 @@
 
         function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
-        // SINCRONIZAÇÃO DE PRODUTOS CORRIGIDA
+        // ENGENHARIA DE PRODUTOS BLINDADA E TOLERANTE A MAIÚSCULAS/MINÚSCULAS
         async function carregarProdutosDoSupabase() {
             const statusLoading = document.getElementById('produtos-loading-status');
+            const grid = document.querySelector('#produtos > div');
+            
             try {
                 const urlProdutos = `${SUPABASE_URL}/rest/v1/produtos?order=id.asc`;
                 const res = await fetch(urlProdutos, {
@@ -844,12 +845,18 @@
                     if (dadosNuvem && dadosNuvem.length > 0) {
                         produtosDB = {};
                         dadosNuvem.forEach(p => {
+                            // Suporte de fallback inteligente para letras maiúsculas/minúsculas vindas do banco
+                            const iconeResolvido = p.icone || p.Icone || "fa-box";
+                            const precoResolvido = p.preco || p.Preco || 0;
+                            const nomeResolvido = p.nome || p.Nome || "Produto Premium";
+                            const categoriaResolvida = p.categoria || p.Categoria || "Geral";
+
                             produtosDB[p.id] = {
                                 id: p.id,
-                                categoria: p.categoria,
-                                nome: p.nome,
-                                preco: parseFloat(p.preco),
-                                icone: p.icone
+                                categoria: categoriaResolvida,
+                                nome: nomeResolvido,
+                                preco: parseFloat(precoResolvido),
+                                icone: iconeResolvido
                             };
                         });
                     } else {
@@ -859,18 +866,26 @@
                     produtosDB = { ...produtosBackupLocal };
                 }
             } catch (err) {
-                console.warn("Erro ao ler produtos do Supabase, aplicando backup estático local:", err);
+                console.warn("Conexão instável. Aplicando catálogo de redundância local.", err);
                 produtosDB = { ...produtosBackupLocal };
             }
 
-            if (statusLoading) statusLoading.classList.add('hidden');
+            if (statusLoading) statusLoading.style.display = 'none';
             renderizarVitrine();
         }
 
         function renderizarVitrine() {
             const grid = document.querySelector('#produtos > div');
-            if(!grid) return; grid.innerHTML = '';
-            Object.values(produtosDB).forEach(p => {
+            if(!grid) return; 
+            grid.innerHTML = '';
+            
+            const itens = Object.values(produtosDB);
+            if (itens.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 text-xs uppercase tracking-widest">Nenhum item localizado no catálogo</div>`;
+                return;
+            }
+
+            itens.forEach(p => {
                 grid.innerHTML += `
                     <div class="bg-white border border-gray-200/70 rounded-3xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
                         <div class="bg-gray-50/80 h-52 rounded-2xl flex items-center justify-center mb-5 border border-gray-100 relative overflow-hidden">
@@ -1063,7 +1078,6 @@
         }
 
         checarSessao();
-        // Inicializa a busca de produtos diretamente na nuvem
         carregarProdutosDoSupabase();
     </script>
 </body>
