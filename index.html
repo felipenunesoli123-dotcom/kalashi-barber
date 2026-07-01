@@ -27,6 +27,7 @@
 </head>
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 text-black antialiased selection:bg-black selection:text-white overflow-x-hidden pb-16">
 
+    <!-- BOTÕES FLUTUANTES -->
     <div class="fixed bottom-6 left-6 z-50 flex flex-col gap-3">
         <a href="https://www.instagram.com/kalashibarbershop?igsh=MXc3aXZtOHZpMjN5aQ==" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300">
             <i class="fab fa-instagram text-3xl"></i>
@@ -36,11 +37,14 @@
         </a>
     </div>
 
+    <!-- CABEÇALHO -->
     <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-40 w-full transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center gap-4">
             
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload();">
-                <div class="w-12 h-12 flex items-center justify-center hover:scale-105 transition-transform duration-300 drop-shadow-sm">
+            <!-- ESQUERDA: LOGO AMPLIADA E VETORIZADA -->
+            <div class="flex items-center gap-4 cursor-pointer" onclick="window.location.reload();">
+                <!-- Aumentado de w-12 h-12 para w-16 h-16 (Destaque Máximo) -->
+                <div class="w-16 h-16 flex items-center justify-center hover:scale-105 transition-transform duration-300 drop-shadow-md shrink-0">
                     <svg viewBox="0 0 500 500" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="250" cy="250" r="230" fill="white" />
                         <g transform="translate(45, 0)">
@@ -55,11 +59,12 @@
                         <text x="138" y="325" font-family="'Courier New', monospace" font-size="24" font-weight="bold" fill="black" letter-spacing="8">CLUB</text>
                     </svg>
                 </div>
-                <span class="font-serif-kalashi font-black text-base sm:text-xl text-premium-chrome block select-none">
+                <span class="font-serif-kalashi font-black text-lg sm:text-2xl text-premium-chrome block select-none whitespace-nowrap">
                     KALASHI BARBER SHOP
                 </span>
             </div>
 
+            <!-- DIREITA -->
             <div class="flex items-center gap-2 sm:gap-4">
                 <div id="area-auth-topo" class="text-xs font-black uppercase tracking-wider text-gray-700 mr-2 whitespace-nowrap">
                     <span class="text-gray-400 animate-pulse">Carregando...</span>
@@ -78,6 +83,7 @@
         </div>
     </header>
 
+    <!-- MENU DE NAVEGAÇÃO -->
     <div id="drawer-menu" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="alternarMenuNavegacao()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-xs bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100 transition-all">
@@ -100,6 +106,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-gray-100 shadow-2xl relative my-8">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -114,6 +121,7 @@
                 <span id="alerta-auth-texto">Credenciais incorretas.</span>
             </div>
 
+            <!-- FORMULÁRIO DE LOGIN -->
             <form id="form-login" onsubmit="executarLogin(event)" class="space-y-4">
                 <div class="space-y-1">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail</label>
@@ -126,6 +134,7 @@
                 <button type="submit" id="btn-login-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Entrar no Sistema</button>
             </form>
 
+            <!-- FORMULÁRIO DE CADASTRO -->
             <form id="form-cadastro" onsubmit="executarCadastro(event)" class="space-y-4 hidden">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1">
@@ -198,6 +207,7 @@
                 <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Criar Minha Conta</button>
             </form>
 
+            <!-- VERIFICAÇÃO MFA -->
             <div id="fluxo-verificacao-email" class="hidden text-center space-y-4 py-2">
                 <div class="w-12 h-12 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center mx-auto text-black">
                     <i class="fas fa-envelope-open-text text-xl"></i>
@@ -217,6 +227,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE RASTREAMENTO -->
     <div id="modal-rastreio" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharRastreio()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -258,6 +269,7 @@
         </div>
     </div>
 
+    <!-- DRAWER CARRINHO -->
     <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="alternarCarrinho()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100">
@@ -278,8 +290,10 @@
         </div>
     </div>
 
+    <!-- CONTEÚDO DINÂMICO PRINCIPAL -->
     <div id="conteudo-principal">
 
+        <!-- VITRINE -->
         <div id="painel-vitrine">
             <section class="relative bg-black text-white py-20 text-center px-4 overflow-hidden shadow-lg border-b border-gray-900">
                 <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(40,40,40,0.3)_0%,transparent_70%)]"></div>
@@ -295,11 +309,13 @@
             </main>
         </div>
 
+        <!-- MEUS PEDIDOS -->
         <div id="painel-pedidos" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
             <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-8 border-b pb-4"><i class="fas fa-history mr-2 text-gray-400"></i>Histórico de Compras</h2>
             <div id="lista-pedidos-usuario" class="space-y-4"></div>
         </div>
 
+        <!-- PAINEL MEU ACESSO -->
         <div id="painel-acesso" class="hidden max-w-2xl mx-auto px-4 py-16 w-full">
             <div class="bg-white border border-gray-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
                 <div>
@@ -616,7 +632,7 @@
                     const dadosAtualizados = await res.json();
                     salvarSessao(dadosAtualizados[0]);
                     alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-green-50 border border-green-200 text-green-700";
-                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Dados atualizados com sucesso!</span>`;
+                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Dados updated com sucesso!</span>`;
                     alerta.classList.remove('hidden');
                 } else {
                     throw new Error();
