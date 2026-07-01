@@ -20,13 +20,14 @@
             animation: pulse-glow 4s ease-in-out infinite;
         }
         @keyframes pulse-glow {
-            0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
-            50% { opacity: 1; fill: drop-shadow(0 0 8px rgba(0,0,0,0.2)); }
+            0%, 100) { opacity: 0.95; filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,0,0,0.2)); }
         }
     </style>
 </head>
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 text-black antialiased selection:bg-black selection:text-white overflow-x-hidden pb-16">
 
+    <!-- BOTÕES FLUTUANTES -->
     <div class="fixed bottom-6 left-6 z-50 flex flex-col gap-3">
         <a href="https://www.instagram.com/kalashibarbershop?igsh=MXc3aXZtOHZpMjN5aQ==" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300">
             <i class="fab fa-instagram text-3xl"></i>
@@ -36,9 +37,11 @@
         </a>
     </div>
 
+    <!-- CABEÇALHO -->
     <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-40 w-full transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center gap-4">
             
+            <!-- ESQUERDA: LOGO GIGANTE EM DESTAQUE MÁXIMO FLUTUANTE -->
             <div class="flex items-center gap-4 cursor-pointer relative" onclick="window.location.reload();">
                 <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center hover:scale-105 transition-transform duration-300 drop-shadow-md shrink-0 bg-white rounded-full p-0.5 border border-gray-100">
                     <svg viewBox="0 0 500 500" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -60,6 +63,7 @@
                 </span>
             </div>
 
+            <!-- DIREITA -->
             <div class="flex items-center gap-2 sm:gap-4">
                 <div id="area-auth-topo" class="text-xs font-black uppercase tracking-wider text-gray-700 mr-2 whitespace-nowrap">
                     <span class="text-gray-400 animate-pulse">Carregando...</span>
@@ -78,6 +82,7 @@
         </div>
     </header>
 
+    <!-- MENU DE NAVEGAÇÃO -->
     <div id="drawer-menu" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="alternarMenuNavegacao()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-xs bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100 transition-all">
@@ -95,11 +100,12 @@
                 </nav>
             </div>
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center border-t border-gray-100 pt-4">
-                Kalashi Barber v2.6
+                Kalashi Barber v2.7
             </div>
         </div>
     </div>
 
+    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modal-auth" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-gray-100 shadow-2xl relative my-8">
             <button onclick="fecharModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -114,6 +120,7 @@
                 <span id="alerta-auth-texto">Credenciais incorretas.</span>
             </div>
 
+            <!-- FORMULÁRIO DE LOGIN -->
             <form id="form-login" onsubmit="executarLogin(event)" class="space-y-4">
                 <div class="space-y-1">
                     <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail</label>
@@ -126,6 +133,7 @@
                 <button type="submit" id="btn-login-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-2 hover:bg-gray-800 transition">Entrar no Sistema</button>
             </form>
 
+            <!-- FORMULÁRIO DE CADASTRO -->
             <form id="form-cadastro" onsubmit="executarCadastro(event)" class="space-y-4 hidden">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1">
@@ -198,6 +206,7 @@
                 <button type="submit" id="btn-cad-submit" class="w-full bg-black text-white text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl mt-4 hover:bg-gray-800 transition">Criar Minha Conta</button>
             </form>
 
+            <!-- VERIFICAÇÃO MFA -->
             <div id="fluxo-verificacao-email" class="hidden text-center space-y-4 py-2">
                 <div class="w-12 h-12 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center mx-auto text-black">
                     <i class="fas fa-envelope-open-text text-xl"></i>
@@ -217,6 +226,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE RASTREAMENTO -->
     <div id="modal-rastreio" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharRastreio()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
@@ -258,6 +268,7 @@
         </div>
     </div>
 
+    <!-- DRAWER CARRINHO -->
     <div id="drawer-carrinho" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="alternarCarrinho()"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white p-6 flex flex-col justify-between shadow-2xl border-l border-gray-100">
@@ -278,8 +289,10 @@
         </div>
     </div>
 
+    <!-- CONTEÚDO DINÂMICO PRINCIPAL -->
     <div id="conteudo-principal">
 
+        <!-- VITRINE -->
         <div id="painel-vitrine">
             <section class="relative bg-black text-white py-20 text-center px-4 overflow-hidden shadow-lg border-b border-gray-900">
                 <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(40,40,40,0.3)_0%,transparent_70%)]"></div>
@@ -291,6 +304,7 @@
             </section>
             
             <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+                <!-- INDICADOR DE CARREGAMENTO DINÂMICO -->
                 <div id="produtos-loading-status" class="text-center py-12 text-xs font-bold uppercase tracking-widest text-gray-400 animate-pulse">
                     <i class="fas fa-sync-alt fa-spin mr-2 text-sm text-black"></i> Sincronizando Catálogo...
                 </div>
@@ -298,11 +312,13 @@
             </main>
         </div>
 
+        <!-- MEUS PEDIDOS -->
         <div id="painel-pedidos" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
             <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-8 border-b pb-4"><i class="fas fa-history mr-2 text-gray-400"></i>Histórico de Compras</h2>
             <div id="lista-pedidos-usuario" class="space-y-4"></div>
         </div>
 
+        <!-- PAINEL MEU ACESSO -->
         <div id="painel-acesso" class="hidden max-w-2xl mx-auto px-4 py-16 w-full">
             <div class="bg-white border border-gray-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
                 <div>
@@ -409,6 +425,7 @@
         let codigoGeradoMFA = null;
         let dadosUsuarioTemporario = null;
         let listaEstadosGlobais = [];
+        let intervaloCronometroPix = null;
 
         function checarSessao() {
             const sessao = localStorage.getItem('kalashi_global_session');
@@ -489,7 +506,7 @@
             const cep = document.getElementById(`${prefixo}-cep`).value.replace(/\D/g, '');
             if(cep.length !== 8) return;
 
-            const inputRua = document.getElementById(`${prefixo}/rua`);
+            const inputRua = document.getElementById(`${prefixo}-rua`);
             const inputBairro = document.getElementById(`${prefixo}-bairro`);
             const seletorEstado = document.getElementById(`${prefixo}-estado`);
 
@@ -647,58 +664,70 @@
 
         function renderizarComponentesAuth() {
             const container = document.getElementById('area-auth-topo');
-            if (usuarioLogado) {
-                const primeiroNome = usuarioLogado.nome ? usuarioLogado.nome.split(' ')[0] : 'Usuário';
-                container.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="text-black font-black"><i class="fas fa-user-circle mr-1 text-gray-500"></i> OLÁ, ${primeiroNome.toUpperCase()}</span>
-                        <button onclick="executarLogout()" class="text-red-500 hover:text-red-700 font-extrabold normal-case transition-colors ml-1">Sair</button>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <button onclick="abrirModalAuth('login')" class="text-gray-600 hover:text-black font-extrabold transition-colors">Entrar</button>
-                    <span class="text-gray-300">|</span>
-                    <button onclick="abrirModalAuth('cadastro')" class="text-gray-600 hover:text-black font-extrabold transition-colors">Criar Conta</button>
-                `;
+            if (container) {
+                if (usuarioLogado) {
+                    const primeiroNome = usuarioLogado.nome ? usuarioLogado.nome.split(' ')[0] : 'Usuário';
+                    container.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="text-black font-black"><i class="fas fa-user-circle mr-1 text-gray-500"></i> OLÁ, ${primeiroNome.toUpperCase()}</span>
+                            <button onclick="executarLogout()" class="text-red-500 hover:text-red-700 font-extrabold normal-case transition-colors ml-1">Sair</button>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <button onclick="abrirModalAuth('login')" class="text-gray-600 hover:text-black font-extrabold transition-colors">Entrar</button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="abrirModalAuth('cadastro')" class="text-gray-600 hover:text-black font-extrabold transition-colors">Criar Conta</button>
+                    `;
+                }
             }
         }
 
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = mensagemHtml;
-            divAlerta.classList.remove('hidden');
+            if(textoAlerta && divAlerta) {
+                textoAlerta.innerHTML = mensagemHtml;
+                divAlerta.classList.remove('hidden');
+            }
         }
 
-        function ocultarErroAuth() { document.getElementById('alerta-auth').classList.add('hidden'); }
+        function occultarErroAuth() { const div = document.getElementById('alerta-auth'); if(div) div.classList.add('hidden'); }
 
         function abrirModalAuth(aba = 'login') {
-            document.getElementById('modal-auth').classList.remove('hidden');
-            cancelarVerificacao();
-            mudarAbaAuth(aba);
+            const modal = document.getElementById('modal-auth');
+            if(modal) {
+                modal.classList.remove('hidden');
+                cancelarVerificacao();
+                mudarAbaAuth(aba);
+            }
         }
 
-        function fecharModalAuth() { document.getElementById('modal-auth').classList.add('hidden'); ocultarErroAuth(); }
+        function fecharModalAuth() { const modal = document.getElementById('modal-auth'); if(modal) modal.classList.add('hidden'); occultarErroAuth(); }
 
         function mudarAbaAuth(aba) {
-            ocultarErroAuth();
+            occultarErroAuth();
+            const fl = document.getElementById('form-login');
+            const fc = document.getElementById('form-cadastro');
+            const bal = document.getElementById('btn-aba-login');
+            const bac = document.getElementById('btn-aba-cadastro');
+            
             if (aba === 'login') {
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('form-cadastro').classList.add('hidden');
-                document.getElementById('btn-aba-login').className = "flex-1 pb-3 text-black border-b-2 border-black";
-                document.getElementById('btn-aba-cadastro').className = "flex-1 pb-3 text-gray-400 border-b-2 border-transparent";
+                if(fl) fl.classList.remove('hidden');
+                if(fc) fc.classList.add('hidden');
+                if(bal) bal.className = "flex-1 pb-3 text-black border-b-2 border-black";
+                if(bac) bac.className = "flex-1 pb-3 text-gray-400 border-b-2 border-transparent";
             } else {
-                document.getElementById('form-login').classList.add('hidden');
-                document.getElementById('form-cadastro').classList.remove('hidden');
-                document.getElementById('btn-aba-login').className = "flex-1 pb-3 text-gray-400 border-b-2 border-transparent";
-                document.getElementById('btn-aba-cadastro').className = "flex-1 pb-3 text-black border-b-2 border-black";
+                if(fl) fl.classList.add('hidden');
+                if(fc) fc.classList.remove('hidden');
+                if(bal) bal.className = "flex-1 pb-3 text-gray-400 border-b-2 border-transparent";
+                if(bac) bac.className = "flex-1 pb-3 text-black border-b-2 border-black";
             }
         }
 
         async function executarCadastro(e) {
             if (e) e.preventDefault();
-            ocultarErroAuth();
+            occultarErroAuth();
             
             const dataNasc = document.getElementById('cad-nascimento').value;
             if (calcularIdadeValida(dataNasc) < 18) {
@@ -706,7 +735,8 @@
                 return;
             }
 
-            document.getElementById('btn-cad-submit').innerText = "Processando...";
+            const btn = document.getElementById('btn-cad-submit');
+            if(btn) btn.innerText = "Processando...";
             const nome = document.getElementById('cad-nome').value;
             const email = document.getElementById('cad-email').value.toLowerCase().trim();
             const senha = document.getElementById('cad-senha').value;
@@ -730,7 +760,7 @@
 
                 if (dadosChecagem.length > 0) {
                     mostrarErroAuth(`Este e-mail já está cadastrado. <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black">Entrar</a>.`);
-                    document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
+                    if(btn) btn.innerText = "Criar Minha Conta";
                     return;
                 }
 
@@ -747,13 +777,14 @@
                     mostrarErroAuth("Falha de resposta do servidor.");
                 }
             } catch (err) { mostrarErroAuth("Erro de conexão."); }
-            document.getElementById('btn-cad-submit').innerText = "Criar Minha Conta";
+            if(btn) btn.innerText = "Criar Minha Conta";
         }
 
         async function executarLogin(e) {
             if (e) e.preventDefault();
-            ocultarErroAuth();
-            document.getElementById('btn-login-submit').innerText = "Autenticando...";
+            occultarErroAuth();
+            const btn = document.getElementById('btn-login-submit');
+            if(btn) btn.innerText = "Autenticando...";
             const email = document.getElementById('login-email').value.toLowerCase().trim();
             const senha = document.getElementById('login-senha').value;
 
@@ -764,31 +795,36 @@
 
                 if (dadosUsuario.length === 0) {
                     mostrarErroAuth("E-mail ou senha incorretos.");
-                    document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
+                    if(btn) btn.innerText = "Entrar no Sistema";
                     return;
                 }
 
                 iniciarFluxoVerificacao(dadosUsuario[0]);
             } catch (err) { mostrarErroAuth("Servidor inacessível."); }
-            document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
+            if(btn) btn.innerText = "Entrar no Sistema";
         }
 
         function iniciarFluxoVerificacao(usuario) {
-            ocultarErroAuth();
+            occultarErroAuth();
             dadosUsuarioTemporario = usuario;
             codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
             alert(`[CÓDIGO DE VERIFICAÇÃO]\n\nCódigo: ${codigoGeradoMFA}`);
 
-            document.getElementById('form-login').classList.add('hidden');
-            document.getElementById('form-cadastro').classList.add('hidden');
-            document.getElementById('abas-auth').classList.add('hidden');
-            document.getElementById('fluxo-verificacao-email').classList.remove('hidden');
-            document.getElementById('codigo-mfa-input').value = "";
-            document.getElementById('codigo-mfa-input').focus();
+            const fl = document.getElementById('form-login');
+            const fc = document.getElementById('form-cadastro');
+            const ab = document.getElementById('abas-auth');
+            const fv = document.getElementById('fluxo-verificacao-email');
+            const cmi = document.getElementById('codigo-mfa-input');
+
+            if(fl) fl.classList.add('hidden');
+            if(fc) fc.classList.add('hidden');
+            if(ab) ab.classList.add('hidden');
+            if(fv) fv.classList.remove('hidden');
+            if(cmi) { cmi.value = ""; cmi.focus(); }
         }
 
         function validarCodigoVerificacao() {
-            ocultarErroAuth();
+            occultarErroAuth();
             const codigoDigitado = document.getElementById('codigo-mfa-input').value.trim();
 
             if (codigoDigitado === codigoGeradoMFA) {
@@ -801,28 +837,25 @@
 
         function cancelarVerificacao() {
             codigoGeradoMFA = null; dadosUsuarioTemporario = null;
-            document.getElementById('abas-auth').classList.remove('hidden');
-            document.getElementById('fluxo-verificacao-email').classList.add('hidden');
+            const ab = document.getElementById('abas-auth');
+            const fv = document.getElementById('fluxo-verificacao-email');
+            if(ab) ab.classList.remove('hidden');
+            if(fv) fv.classList.add('hidden');
             mudarAbaAuth('login');
         }
 
         function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
-        // BUSCA DE PRODUTOS TOTALMENTE REVISADA
         async function carregarProdutosDoSupabase() {
             try {
                 const urlProdutos = `${SUPABASE_URL}/rest/v1/produtos?order=id.asc`;
                 const res = await fetch(urlProdutos, {
                     method: "GET",
-                    headers: {
-                        "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`
-                    }
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
                 });
 
                 if (res.ok) {
                     const dadosNuvem = await res.json();
-                    
                     if (dadosNuvem && dadosNuvem.length > 0) {
                         produtosDB = {};
                         dadosNuvem.forEach(p => {
@@ -839,25 +872,15 @@
                                 icone: iconeResolvido
                             };
                         });
-                    } else {
-                        produtosDB = { ...produtosBackupLocal };
-                    }
-                } else {
-                    produtosDB = { ...produtosBackupLocal };
-                }
-            } catch (err) {
-                console.warn("Erro ao ler produtos, aplicando redundância local:", err);
-                produtosDB = { ...produtosBackupLocal };
-            }
+                    } else { produtosDB = { ...produtosBackupLocal }; }
+                } else { produtosDB = { ...produtosBackupLocal }; }
+            } catch (err) { produtosDB = { ...produtosBackupLocal }; }
 
-            // Oculta o indicador de carregamento de forma segura
             const statusLoading = document.getElementById('produtos-loading-status');
             if (statusLoading) statusLoading.style.display = 'none';
-
             renderizarVitrine();
         }
 
-        // RENDERIZADOR PRECISO ATRELADO DIRETAMENTE AO ID DA DIV GRID
         function renderizarVitrine() {
             const grid = document.getElementById('grid-produtos');
             if(!grid) return; 
@@ -888,7 +911,7 @@
             });
         }
 
-        function alternarCarrinho() { const drawer = document.getElementById('drawer-carrinho'); drawer.classList.toggle('hidden'); renderizarCarrinhoDrawer(); }
+        function  alternarCarrinho() { const drawer = document.getElementById('drawer-carrinho'); if(drawer) drawer.classList.toggle('hidden'); renderizarCarrinhoDrawer(); }
 
         function adicionarAoCarrinho(id) {
             const prod = produtosDB[id];
@@ -906,7 +929,9 @@
         function atualizarContadorCarrinho() {
             const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
             const badge = document.getElementById('carrinho-contador');
-            if(totalItens > 0) { badge.innerText = totalItens; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+            if(badge) {
+                if(totalItens > 0) { badge.innerText = totalItens; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+            }
         }
 
         function salvarCarrinhoLocal() { localStorage.setItem('kalashi_carrinho', JSON.stringify(carrinho)); }
@@ -915,6 +940,8 @@
         function renderizarCarrinhoDrawer() {
             const container = document.getElementById('carrinho-itens-lista');
             const txtTotal = document.getElementById('carrinho-preco-total');
+            if(!container || !txtTotal) return;
+
             if(carrinho.length === 0) {
                 container.innerHTML = `<div class="text-center py-12 text-gray-400 text-xs uppercase tracking-wider"><i class="fas fa-shopping-basket text-3xl mb-3 block"></i>Carrinho Vazio</div>`;
                 txtTotal.innerText = "R$ 0,00"; return;
@@ -952,7 +979,10 @@
 
         function renderizarTelaCheckout() {
             let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-            document.getElementById('conteudo-principal').innerHTML = `
+            const cp = document.getElementById('conteudo-principal');
+            if(!cp) return;
+
+            cp.innerHTML = `
                 <div class="max-w-3xl mx-auto px-4 py-12 w-full">
                     <button onclick="window.location.reload();" class="mb-6 flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black transition"><i class="fas fa-arrow-left"></i> Voltar</button>
                     <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
@@ -973,26 +1003,110 @@
                         <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 h-fit space-y-4 shadow-sm">
                             <div class="text-sm font-bold text-gray-500 uppercase">Total</div>
                             <div class="text-3xl font-black font-serif-kalashi text-black">R$ ${subtotal.toFixed(2)}</div>
-                            <button id="btn-finalizar-pedido" onclick="executarCompraCarrinhoNuvem()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition hover:bg-gray-800 shadow-md">Fechar Pedido</button>
+                            <button id="btn-finalizar-pedido" onclick="gerarCheckoutPixPremium()" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition hover:bg-gray-800 shadow-md">Proceder para o PIX</button>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        async function executarCompraCarrinhoNuvem() {
-            const btn = document.getElementById('btn-finalizar-pedido');
-            const enderecoDefinitivo = document.getElementById('checkout-endereco-input').value.trim();
-            
-            if(!enderecoDefinitivo) {
-                alert("Por favor, preencha o endereço de entrega, Senhor.");
-                return;
-            }
+        // NOVA FUNÇÃO: INTERFACE DE PAGAMENTO VIA PIX PREMIUM SIMULADO
+        function gerarCheckoutPixPremium() {
+            const endereco = document.getElementById('checkout-endereco-input').value.trim();
+            if(!endereco) { alert("Por favor, preencha o endereço de entrega, Senhor."); return; }
 
-            if(btn) btn.disabled = true;
+            let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
             const numeroAleatorio = Math.floor(100000 + Math.random() * 900000);
             const codigoRastreio = `KL-${numeroAleatorio}-BR`;
-            let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+            
+            const cp = document.getElementById('conteudo-principal');
+            if(!cp) return;
+
+            cp.innerHTML = `
+                <div class="max-w-md mx-auto px-4 py-12 w-full">
+                    <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-xl text-center space-y-6 relative overflow-hidden">
+                        
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-black"></div>
+                        
+                        <div class="flex justify-between items-center text-xs uppercase font-bold tracking-widest text-gray-400 border-b pb-3">
+                            <span>Checkout PIX</span>
+                            <span class="font-mono text-black">${codigoRastreio}</span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Valor a pagar</span>
+                            <h2 class="text-3xl font-black font-serif-kalashi text-black">R$ ${subtotal.toFixed(2)}</h2>
+                        </div>
+
+                        <!-- SIMULAÇÃO DO DESIGN DO QR CODE VETORIZADO -->
+                        <div class="w-48 h-48 border border-gray-200 mx-auto rounded-2xl bg-gray-50 p-4 flex flex-col items-center justify-center relative group">
+                            <div class="grid grid-cols-2 gap-2 w-full h-full opacity-80 group-hover:opacity-100 transition-opacity">
+                                <div class="border-t-4 border-l-4 border-black w-8 h-8"></div>
+                                <div class="border-t-4 border-r-4 border-black w-8 h-8 justify-self-end"></div>
+                                <div class="border-b-4 border-l-4 border-black w-8 h-8 align-self-end"></div>
+                                <div class="border-b-4 border-r-4 border-black w-8 h-8 justify-self-end align-self-end"></div>
+                            </div>
+                            <i class="fas fa-qrcode text-6xl text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
+                        </div>
+
+                        <div class="bg-gray-50 border rounded-xl p-3 text-center space-y-2">
+                            <span class="text-[10px] uppercase font-black text-gray-500 block tracking-wider"><i class="far fa-clock mr-1"></i> Esta cobrança expira em:</span>
+                            <div id="pix-cronometro-regressivo" class="text-sm font-mono font-bold text-black tracking-widest">05:00</div>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <button onclick="copiarCodigoPixCopiaCola('${codigoRastreio}', ${subtotal})" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-gray-800 transition flex items-center justify-center gap-2">
+                                <i class="far fa-copy"></i> Copiar Código PIX
+                            </button>
+                            <button onclick="window.location.reload();" class="w-full border border-gray-200 text-gray-400 py-2.5 rounded-xl text-[11px] uppercase tracking-widest font-bold hover:text-black hover:bg-gray-50 transition">
+                                Cancelar Operação
+                            </button>
+                        </div>
+
+                        <div class="border-t pt-4 flex items-center justify-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">
+                            <i class="fas fa-spinner fa-spin text-black"></i> Aguardando detecção do pagamento...
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Dispara o cronômetro regressivo de 5 minutos
+            iniciarContagemRegressivaPix(5);
+
+            // Simula a aprovação automática do Pix após 10 segundos
+            setTimeout(() => {
+                executarCompraCarrinhoNuvem(codigoRastreio, endereco, subtotal);
+            }, 10000);
+        }
+
+        function iniciarContagemRegressivaPix(minutos) {
+            let tempo = minutos * 60;
+            const display = document.getElementById('pix-cronometro-regressivo');
+            if(intervaloCronometroPix) clearInterval(intervaloCronometroPix);
+
+            intervaloCronometroPix = setInterval(() => {
+                let min = Math.floor(tempo / 60);
+                let seg = tempo % 60;
+                min = min < 10 ? '0' + min : min;
+                seg = seg < 10 ? '0' + seg : seg;
+                
+                if (display) display.innerText = `${min}:${seg}`;
+                if (--tempo < 0) {
+                    clearInterval(intervaloCronometroPix);
+                    alert("Tempo esgotado para o PIX, Senhor.");
+                    window.location.reload();
+                }
+            }, 1000);
+        }
+
+        function copiarCodigoPixCopiaCola(rastreio, total) {
+            const stringChave = `00020101021126580014br.gov.bcb.pix0136kalashibarbershop2026@pix.com0523COMPRA-${rastreio}5204000053039865405${total.toFixed(2)}5802BR5918KalashiBarberShop6009SaoVicente62070503***6304A1B2`;
+            navigator.clipboard.writeText(stringChave);
+            alert("Código Copia e Cola transferido para a área de transferência, Senhor!");
+        }
+
+        async function executarCompraCarrinhoNuvem(codigoRastreio, enderecoDefinitivo, subtotal) {
+            if(intervaloCronometroPix) clearInterval(intervaloCronometroPix);
             let nomesProdutos = carrinho.map(item => `${item.quantidade}x ${item.nome}`).join(' | ');
 
             try {
@@ -1006,17 +1120,53 @@
                         produto_nome: nomesProdutos, 
                         valor_total: parseFloat(subtotal), 
                         endereco_entrega: enderecoDefinitivo, 
-                        status: "Processando" 
+                        status: "Pago" // Atualizado automaticamente para Pago via simulação PIX
                     })
                 });
                 carrinho = []; salvarCarrinhoLocal(); atualizarContadorCarrinho();
-                alert(`Pedido gerado com sucesso, Senhor! Rastreio: ${codigoRastreio}`);
+                
+                // Redireciona para tela de confirmação de sucesso premium
+                renderizarSucessoPedidoPremium(codigoRastreio);
+            } catch (err) { 
+                alert("Erro ao processar transação financeira na nuvem."); 
                 window.location.reload();
-            } catch (err) { alert("Erro ao fechar transação."); }
+            }
+        }
+
+        function renderizarSucessoPedidoPremium(codigoRastreio) {
+            const cp = document.getElementById('conteudo-principal');
+            if(!cp) return;
+
+            cp.innerHTML = `
+                <div class="max-w-md mx-auto px-4 py-16 w-full">
+                    <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-2xl text-center space-y-6">
+                        <div class="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto border border-green-100 shadow-sm animate-bounce">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="text-xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900">Pagamento Confirmado!</h3>
+                            <p class="text-xs text-gray-500">Os servidores da rede identificaram a transação PIX com sucesso.</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-2xl p-4 border text-left space-y-2.5 font-medium text-xs text-gray-600">
+                            <div class="flex justify-between font-bold text-black border-b pb-1.5 uppercase tracking-wide text-[10px] text-gray-400">
+                                <span>Dados da remessa</span>
+                                <span>Imediato</span>
+                            </div>
+                            <p><strong class="text-black">Código de Rastreio:</strong> <span class="font-mono bg-white border px-1.5 py-0.5 rounded font-bold">${codigoRastreio}</span></p>
+                            <p><strong class="text-black">Destinatário:</strong> ${usuarioLogado.nome}</p>
+                            <p class="leading-relaxed"><strong class="text-black">Envio para:</strong> ${usuarioLogado.endereco}</p>
+                        </div>
+                        <button onclick="window.location.reload();" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-gray-800 transition shadow-md block text-center">
+                            Voltar para a Loja
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         async function carregarHistoricoPedidos() {
             const container = document.getElementById('lista-pedidos-usuario');
+            if(!container) return;
             if(!usuarioLogado) { container.innerHTML = `<div class="text-center py-8 text-xs text-gray-400">Faça login para ver seu histórico.</div>`; return; }
             container.innerHTML = `<div class="text-center text-xs text-gray-400 uppercase">Buscando na nuvem...</div>`;
             try {
@@ -1026,11 +1176,12 @@
                 if(!pedidos || pedidos.length === 0) { container.innerHTML = `<div class="text-center text-xs text-gray-400 py-8">Nenhum pedido localizado.</div>`; return; }
                 container.innerHTML = "";
                 pedidos.forEach(p => {
+                    const badgeColor = p.status === "Pago" ? "bg-green-500" : "bg-black";
                     container.innerHTML += `
                         <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm space-y-3">
                             <div class="flex justify-between items-center border-b pb-2">
                                 <div><span class="text-[10px] text-gray-400 block font-bold">Identificador</span><span class="font-mono bg-gray-100 px-2 py-0.5 rounded text-xs font-bold">${p.numero_pedido}</span></div>
-                                <span class="bg-black text-white text-[9px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">${p.status}</span>
+                                <span class="${badgeColor} text-white text-[9px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full">${p.status}</span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                                 <div><span class="text-gray-400 font-bold block text-[10px]">Itens</span><span class="text-gray-900">${p.produto_nome}</span></div>
@@ -1041,24 +1192,34 @@
             } catch (err) { container.innerHTML = `<div class="text-center text-xs text-red-500">Erro na busca.</div>`; }
         }
 
-        function abrirRastreio() { document.getElementById('modal-rastreio').classList.remove('hidden'); }
-        function fecharRastreio() { document.getElementById('modal-rastreio').classList.add('hidden'); }
+        function abrirRastreio() { const mr = document.getElementById('modal-rastreio'); if(mr) mr.classList.remove('hidden'); }
+        function fecharRastreio() { const mr = document.getElementById('modal-rastreio'); if(mr) mr.classList.add('hidden'); }
+        
         async function executarRastreio() {
             const codigo = document.getElementById('codigo-rastreio-input').value.trim().toUpperCase();
             if(!codigo) return;
+            const resRastreio = document.getElementById('resultado-rastreio');
+            const errRastreio = document.getElementById('erro-rastreio');
+            if(resRastreio) resRastreio.classList.add('hidden');
+            if(errRastreio) errRastreio.classList.add('hidden');
+
             try {
                 const url = `${SUPABASE_URL}/rest/v1/pedidos?numero_pedido=eq.${encodeURIComponent(codigo)}`;
                 const res = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
                 const dados = await res.json();
                 if(dados && dados.length > 0) {
                     const p = dados[0];
-                    document.getElementById('rastreio-status').innerText = p.status;
+                    const rStatus = document.getElementById('rastreio-status');
+                    if(rStatus) {
+                        rStatus.innerText = p.status;
+                        rStatus.className = p.status === "Pago" ? "bg-green-500 text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full" : "bg-black text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full";
+                    }
                     document.getElementById('rastreio-produto').innerText = p.produto_nome;
                     document.getElementById('rastreio-cliente').innerText = p.cliente_nome;
                     document.getElementById('rastreio-endereco').innerText = p.endereco_entrega;
-                    document.getElementById('resultado-rastreio').classList.remove('hidden');
-                } else { document.getElementById('erro-rastreio').classList.remove('hidden'); }
-            } catch(e){}
+                    if(resRastreio) resRastreio.classList.remove('hidden');
+                } else { if(errRastreio) errRastreio.classList.remove('hidden'); }
+            } catch(e){ if(errRastreio) errRastreio.classList.remove('hidden'); }
         }
 
         checarSessao();
