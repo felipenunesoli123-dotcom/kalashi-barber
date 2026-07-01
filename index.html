@@ -20,7 +20,7 @@
             animation: pulse-glow 4s ease-in-out infinite;
         }
         @keyframes pulse-glow {
-            0%, 100) { opacity: 0.95; filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
+            0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 2px rgba(0,0,0,0.1)); }
             50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(0,0,0,0.2)); }
         }
     </style>
@@ -41,8 +41,8 @@
     <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-40 w-full transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center gap-4">
             
-            <!-- ESQUERDA: LOGO GIGANTE EM DESTAQUE MÁXIMO FLUTUANTE -->
-            <div class="flex items-center gap-4 cursor-pointer relative" onclick="window.location.reload();">
+            <!-- ESQUERDA: LOGO GIGANTE COM EVENTO DE CONTADOR DE CLIQUES OCULTO -->
+            <div class="flex items-center gap-4 cursor-pointer relative" onclick="registrarCliqueLogoAdministrador();">
                 <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center hover:scale-105 transition-transform duration-300 drop-shadow-md shrink-0 bg-white rounded-full p-0.5 border border-gray-100">
                     <svg viewBox="0 0 500 500" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="250" cy="250" r="230" fill="white" />
@@ -97,10 +97,14 @@
                     <button onclick="mudarPainelMenu('acesso')" class="w-full text-left font-semibold text-sm uppercase tracking-wider py-3 px-4 rounded-xl hover:bg-gray-50 text-gray-900 transition flex items-center gap-3"><i class="fas fa-user-shield text-gray-400 w-5"></i> Meu Acesso</button>
                     <div class="border-t border-gray-100 my-2"></div>
                     <button onclick="abrirRastreioMudar()" class="w-full text-left font-semibold text-sm uppercase tracking-wider py-3 px-4 rounded-xl hover:bg-gray-50 text-gray-900 transition flex items-center gap-3"><i class="fas fa-truck text-gray-400 w-5"></i> Rastrear Pedido</button>
+                    <div id="menu-opcao-admin" class="hidden">
+                        <div class="border-t border-gray-100 my-2"></div>
+                        <button onclick="abrirPainelAdministrativoOculto()" class="w-full text-left font-semibold text-sm uppercase tracking-wider py-3 px-4 rounded-xl bg-black text-white hover:bg-gray-800 transition flex items-center gap-3"><i class="fas fa-user-cog w-5"></i> Painel Geral Admin</button>
+                    </div>
                 </nav>
             </div>
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center border-t border-gray-100 pt-4">
-                Kalashi Barber v2.7
+                Kalashi Barber v2.8
             </div>
         </div>
     </div>
@@ -402,6 +406,37 @@
             </div>
         </div>
 
+        <!-- NOVO PAINEL DINÂMICO: VISUALIZAÇÃO GERAL DA ÁREA DO BARBEIRO (ADMINISTRATIVO) -->
+        <div id="painel-admin-oculto" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+            <div class="flex justify-between items-center border-b pb-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 flex items-center gap-2"><i class="fas fa-user-shield text-gray-400"></i> Central do Barbeiro</h2>
+                    <p class="text-xs text-gray-400 mt-1">Controle operacional e rastreamento de vendas unificadas na nuvem.</p>
+                </div>
+                <button onclick="window.location.reload();" class="bg-gray-100 text-gray-700 font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-gray-200 transition">Sair do Modo Admin</button>
+            </div>
+            
+            <div class="bg-white border rounded-3xl overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-black text-white uppercase font-bold tracking-wider text-[10px] border-b">
+                                <th class="p-4">Rastreio / ID</th>
+                                <th class="p-4">Comprador</th>
+                                <th class="p-4">Produtos Adquiridos</th>
+                                <th class="p-4">Total</th>
+                                <th class="p-4">Status Atual</th>
+                                <th class="p-4 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-admin-pedidos-rows" class="divide-y text-gray-700 font-medium">
+                            <!-- Gerado dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <footer class="bg-black text-gray-500 text-xs py-10 text-center border-t border-gray-900 w-full px-4 mt-20">
@@ -426,6 +461,9 @@
         let dadosUsuarioTemporario = null;
         let listaEstadosGlobais = [];
         let intervaloCronometroPix = null;
+        
+        // Mecanismo oculto de detecção administrativa
+        let contadorCliquesLogoAdmin = 0;
 
         function checarSessao() {
             const sessao = localStorage.getItem('kalashi_global_session');
@@ -441,6 +479,109 @@
             carregarCarrinhoLocal();
             carregarEstadosIBGE('cad');
             carregarEstadosIBGE('perf');
+
+            // Verifica se o privilégio de administrador já estava aberto nesta máquina
+            if(localStorage.getItem('kalashi_is_admin_mode') === 'true') {
+                document.getElementById('menu-opcao-admin').classList.remove('hidden');
+            }
+        }
+
+        // FUNÇÃO DE INTELIGÊNCIA: GATILHO DE CLIQUES CONSECUTIVOS NA LOGO
+        function registrarCliqueLogoAdministrador() {
+            contadorCliquesLogoAdmin++;
+            if (contadorCliquesLogoAdmin === 5) {
+                contadorCliquesLogoAdmin = 0; // Reseta o estado
+                const token = prompt("[ÁREA RESTRITA - SISTEMA AUTOMATIZADO]\n\nPor favor, insira a chave mestre do administrador:");
+                if (token === "admin123") {
+                    localStorage.setItem('kalashi_is_admin_mode', 'true');
+                    document.getElementById('menu-opcao-admin').classList.remove('hidden');
+                    alert("Acesso Administrativo concedido, Senhor! O atalho definitivo foi adicionado ao menu de navegação lateral.");
+                    alternarMenuNavegacao();
+                } else if(token !== null) {
+                    alert("Chave incorreta. Acesso negado.");
+                    window.location.reload();
+                } else {
+                    window.location.reload();
+                }
+            }
+        }
+
+        function abrirPainelAdministrativoOculto() {
+            document.getElementById('painel-vitrine').classList.add('hidden');
+            document.getElementById('painel-pedidos').classList.add('hidden');
+            document.getElementById('painel-acesso').classList.add('hidden');
+            document.getElementById('painel-admin-oculto').classList.remove('hidden');
+            document.getElementById('drawer-menu').classList.add('hidden');
+            carregarTodosPedidosAdminNuvem();
+        }
+
+        // FUNÇÃO DE INTELIGÊNCIA: GESTÃO E CARREGAMENTO GERAL DE PEDIDOS DOS CLIENTES
+        async function carregarTodosPedidosAdminNuvem() {
+            const tbody = document.getElementById('tabela-admin-pedidos-rows');
+            if(!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 animate-pulse uppercase font-bold tracking-widest">Acessando base de dados unificada...</td></tr>`;
+            
+            try {
+                const url = `${SUPABASE_URL}/rest/v1/pedidos?order=id.desc`;
+                const res = await fetch(url, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
+                const pedidos = await res.json();
+                
+                if(!pedidos || pedidos.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400">Nenhum pedido cadastrado no sistema.</td></tr>`;
+                    return;
+                }
+                
+                tbody.innerHTML = "";
+                pedidos.forEach(p => {
+                    let badgeClass = "bg-gray-100 text-gray-800";
+                    if(p.status === "Pago") badgeClass = "bg-green-100 text-green-800 font-bold";
+                    if(p.status === "Enviado") badgeClass = "bg-blue-100 text-blue-800 font-bold";
+                    if(p.status === "Concluído") badgeClass = "bg-purple-100 text-purple-800 font-bold";
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="p-4 font-mono font-bold text-black">${p.numero_pedido}</td>
+                            <td class="p-4">
+                                <span class="font-bold block text-gray-900">${p.cliente_nome}</span>
+                                <span class="text-gray-400 text-[10px] block">${p.cliente_email}</span>
+                            </td>
+                            <td class="p-4 text-gray-500 truncate max-w-xs" title="${p.produto_nome}">${p.produto_nome}</td>
+                            <td class="p-4 font-bold text-black">R$ ${parseFloat(p.valor_total).toFixed(2)}</td>
+                            <td class="p-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wide ${badgeClass}">${p.status}</span></td>
+                            <td class="p-4 text-center">
+                                <select onchange="atualizarStatusPedidoAdminNuvem('${p.numero_pedido}', this.value)" class="bg-gray-50 border border-gray-200 rounded-lg p-1 text-[11px] font-bold uppercase tracking-wide outline-none focus:border-black cursor-pointer">
+                                    <option value="Pago" ${p.status === 'Pago' ? 'selected' : ''}>Pago</option>
+                                    <option value="Enviado" ${p.status === 'Enviado' ? 'selected' : ''}>Enviado</option>
+                                    <option value="Concluído" ${p.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500">Falha ao varrer registros na nuvem.</td></tr>`;
+            }
+        }
+
+        // FUNÇÃO DE INTELIGÊNCIA: ALTERAÇÃO DE STATUS DIRETO NO BANCO DE DADOS
+        async function atualizarStatusPedidoAdminNuvem(numeroPedido, novoStatus) {
+            try {
+                const urlUpdate = `${SUPABASE_URL}/rest/v1/pedidos?numero_pedido=eq.${encodeURIComponent(numeroPedido)}`;
+                const res = await fetch(urlUpdate, {
+                    method: "PATCH",
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ status: novoStatus })
+                });
+
+                if(res.ok) {
+                    alert(`Status do pedido ${numeroPedido} alterado com sucesso para "${novoStatus}", Senhor!`);
+                    carregarTodosPedidosAdminNuvem();
+                } else { alert("Erro de comunicação com os servidores."); }
+            } catch (err) { alert("Erro na ponte de dados."); }
         }
 
         function calcularIdadeValida(dataNascimentoString) {
@@ -534,6 +675,7 @@
             document.getElementById('painel-vitrine').classList.add('hidden');
             document.getElementById('painel-pedidos').classList.add('hidden');
             document.getElementById('painel-acesso').classList.add('hidden');
+            document.getElementById('painel-admin-oculto').classList.add('hidden');
 
             if (painel === 'vitrine') {
                 document.getElementById('painel-vitrine').classList.remove('hidden');
@@ -637,7 +779,7 @@
                     const dadosAtualizados = await res.json();
                     salvarSessao(dadosAtualizados[0]);
                     alerta.className = "p-3 text-xs rounded-xl flex items-center gap-2 bg-green-50 border border-green-200 text-green-700";
-                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Dados atualizados com sucesso!</span>`;
+                    alerta.innerHTML = `<i class="fas fa-check-circle"></i><span>Dados updated com sucesso!</span>`;
                     alerta.classList.remove('hidden');
                 } else {
                     throw new Error();
@@ -725,127 +867,6 @@
             }
         }
 
-        async function executarCadastro(e) {
-            if (e) e.preventDefault();
-            occultarErroAuth();
-            
-            const dataNasc = document.getElementById('cad-nascimento').value;
-            if (calcularIdadeValida(dataNasc) < 18) {
-                mostrarErroAuth("Acesso negado. A criação de conta é restrita para maiores de 18 anos.");
-                return;
-            }
-
-            const btn = document.getElementById('btn-cad-submit');
-            if(btn) btn.innerText = "Processando...";
-            const nome = document.getElementById('cad-nome').value;
-            const email = document.getElementById('cad-email').value.toLowerCase().trim();
-            const senha = document.getElementById('cad-senha').value;
-            
-            const cep = document.getElementById('cad-cep').value.trim();
-            const estado = document.getElementById('cad-estado').value;
-            const city = document.getElementById('cad-cidade').value;
-            const rua = document.getElementById('cad-rua').value.trim();
-            const numero = document.getElementById('cad-numero').value.trim();
-            const bairro = document.getElementById('cad-bairro').value.trim();
-            const complemento = document.getElementById('cad-complemento').value.trim();
-            
-            let enderecoCompleto = `${rua}, Nº ${numero}`;
-            if(complemento) enderecoCompleto += ` (${complemento})`;
-            enderecoCompleto += ` - Bairro ${bairro}, ${city}/${estado} - CEP: ${cep}`;
-
-            try {
-                const checarUrl = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
-                const respostaChecagem = await fetch(checarUrl, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
-                const dadosChecagem = await respostaChecagem.json();
-
-                if (dadosChecagem.length > 0) {
-                    mostrarErroAuth(`Este e-mail já está cadastrado. <a href="javascript:void(0)" onclick="mudarAbaAuth('login')" class="underline font-bold text-black">Entrar</a>.`);
-                    if(btn) btn.innerText = "Criar Minha Conta";
-                    return;
-                }
-
-                const respostaSalvar = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
-                    method: "POST",
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=representation" },
-                    body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto, data_nascimento: dataNasc })
-                });
-
-                if (respostaSalvar.ok) {
-                    const novosDados = await respostaSalvar.json();
-                    iniciarFluxoVerificacao(novosDados[0]);
-                } else {
-                    mostrarErroAuth("Falha de resposta do servidor.");
-                }
-            } catch (err) { mostrarErroAuth("Erro de conexão."); }
-            if(btn) btn.innerText = "Criar Minha Conta";
-        }
-
-        async function executarLogin(e) {
-            if (e) e.preventDefault();
-            occultarErroAuth();
-            const btn = document.getElementById('btn-login-submit');
-            if(btn) btn.innerText = "Autenticando...";
-            const email = document.getElementById('login-email').value.toLowerCase().trim();
-            const senha = document.getElementById('login-senha').value;
-
-            try {
-                const urlBusca = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}`;
-                const resposta = await fetch(urlBusca, { headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` } });
-                const dadosUsuario = await resposta.json();
-
-                if (dadosUsuario.length === 0) {
-                    mostrarErroAuth("E-mail ou senha incorretos.");
-                    if(btn) btn.innerText = "Entrar no Sistema";
-                    return;
-                }
-
-                iniciarFluxoVerificacao(dadosUsuario[0]);
-            } catch (err) { mostrarErroAuth("Servidor inacessível."); }
-            if(btn) btn.innerText = "Entrar no Sistema";
-        }
-
-        function iniciarFluxoVerificacao(usuario) {
-            occultarErroAuth();
-            dadosUsuarioTemporario = usuario;
-            codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
-            alert(`[CÓDIGO DE VERIFICAÇÃO]\n\nCódigo: ${codigoGeradoMFA}`);
-
-            const fl = document.getElementById('form-login');
-            const fc = document.getElementById('form-cadastro');
-            const ab = document.getElementById('abas-auth');
-            const fv = document.getElementById('fluxo-verificacao-email');
-            const cmi = document.getElementById('codigo-mfa-input');
-
-            if(fl) fl.classList.add('hidden');
-            if(fc) fc.classList.add('hidden');
-            if(ab) ab.classList.add('hidden');
-            if(fv) fv.classList.remove('hidden');
-            if(cmi) { cmi.value = ""; cmi.focus(); }
-        }
-
-        function validarCodigoVerificacao() {
-            occultarErroAuth();
-            const codigoDigitado = document.getElementById('codigo-mfa-input').value.trim();
-
-            if (codigoDigitado === codigoGeradoMFA) {
-                salvarSessao(dadosUsuarioTemporario);
-                fecharModalAuth();
-                alert(`Conectado com sucesso!`);
-                window.location.reload();
-            } else { mostrarErroAuth("Código incorreto."); }
-        }
-
-        function cancelarVerificacao() {
-            codigoGeradoMFA = null; dadosUsuarioTemporario = null;
-            const ab = document.getElementById('abas-auth');
-            const fv = document.getElementById('fluxo-verificacao-email');
-            if(ab) ab.classList.remove('hidden');
-            if(fv) fv.classList.add('hidden');
-            mudarAbaAuth('login');
-        }
-
-        function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
-
         async function carregarProdutosDoSupabase() {
             try {
                 const urlProdutos = `${SUPABASE_URL}/rest/v1/produtos?order=id.asc`;
@@ -911,7 +932,7 @@
             });
         }
 
-        function  alternarCarrinho() { const drawer = document.getElementById('drawer-carrinho'); if(drawer) drawer.classList.toggle('hidden'); renderizarCarrinhoDrawer(); }
+        function alternarCarrinho() { const drawer = document.getElementById('drawer-carrinho'); if(drawer) drawer.classList.toggle('hidden'); renderizarCarrinhoDrawer(); }
 
         function adicionarAoCarrinho(id) {
             const prod = produtosDB[id];
@@ -1010,7 +1031,6 @@
             `;
         }
 
-        // NOVA FUNÇÃO: INTERFACE DE PAGAMENTO VIA PIX PREMIUM SIMULADO
         function gerarCheckoutPixPremium() {
             const endereco = document.getElementById('checkout-endereco-input').value.trim();
             if(!endereco) { alert("Por favor, preencha o endereço de entrega, Senhor."); return; }
@@ -1025,20 +1045,15 @@
             cp.innerHTML = `
                 <div class="max-w-md mx-auto px-4 py-12 w-full">
                     <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-xl text-center space-y-6 relative overflow-hidden">
-                        
                         <div class="absolute top-0 left-0 w-full h-1.5 bg-black"></div>
-                        
                         <div class="flex justify-between items-center text-xs uppercase font-bold tracking-widest text-gray-400 border-b pb-3">
                             <span>Checkout PIX</span>
                             <span class="font-mono text-black">${codigoRastreio}</span>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Valor a pagar</span>
                             <h2 class="text-3xl font-black font-serif-kalashi text-black">R$ ${subtotal.toFixed(2)}</h2>
                         </div>
-
-                        <!-- SIMULAÇÃO DO DESIGN DO QR CODE VETORIZADO -->
                         <div class="w-48 h-48 border border-gray-200 mx-auto rounded-2xl bg-gray-50 p-4 flex flex-col items-center justify-center relative group">
                             <div class="grid grid-cols-2 gap-2 w-full h-full opacity-80 group-hover:opacity-100 transition-opacity">
                                 <div class="border-t-4 border-l-4 border-black w-8 h-8"></div>
@@ -1048,12 +1063,10 @@
                             </div>
                             <i class="fas fa-qrcode text-6xl text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
                         </div>
-
                         <div class="bg-gray-50 border rounded-xl p-3 text-center space-y-2">
                             <span class="text-[10px] uppercase font-black text-gray-500 block tracking-wider"><i class="far fa-clock mr-1"></i> Esta cobrança expira em:</span>
                             <div id="pix-cronometro-regressivo" class="text-sm font-mono font-bold text-black tracking-widest">05:00</div>
                         </div>
-
                         <div class="space-y-3 pt-2">
                             <button onclick="copiarCodigoPixCopiaCola('${codigoRastreio}', ${subtotal})" class="w-full bg-black text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-gray-800 transition flex items-center justify-center gap-2">
                                 <i class="far fa-copy"></i> Copiar Código PIX
@@ -1062,7 +1075,6 @@
                                 Cancelar Operação
                             </button>
                         </div>
-
                         <div class="border-t pt-4 flex items-center justify-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">
                             <i class="fas fa-spinner fa-spin text-black"></i> Aguardando detecção do pagamento...
                         </div>
@@ -1070,10 +1082,8 @@
                 </div>
             `;
 
-            // Dispara o cronômetro regressivo de 5 minutos
             iniciarContagemRegressivaPix(5);
 
-            // Simula a aprovação automática do Pix após 10 segundos
             setTimeout(() => {
                 executarCompraCarrinhoNuvem(codigoRastreio, endereco, subtotal);
             }, 10000);
@@ -1120,12 +1130,10 @@
                         produto_nome: nomesProdutos, 
                         valor_total: parseFloat(subtotal), 
                         endereco_entrega: enderecoDefinitivo, 
-                        status: "Pago" // Atualizado automaticamente para Pago via simulação PIX
+                        status: "Pago" 
                     })
                 });
                 carrinho = []; salvarCarrinhoLocal(); atualizarContadorCarrinho();
-                
-                // Redireciona para tela de confirmação de sucesso premium
                 renderizarSucessoPedidoPremium(codigoRastreio);
             } catch (err) { 
                 alert("Erro ao processar transação financeira na nuvem."); 
@@ -1176,7 +1184,11 @@
                 if(!pedidos || pedidos.length === 0) { container.innerHTML = `<div class="text-center text-xs text-gray-400 py-8">Nenhum pedido localizado.</div>`; return; }
                 container.innerHTML = "";
                 pedidos.forEach(p => {
-                    const badgeColor = p.status === "Pago" ? "bg-green-500" : "bg-black";
+                    let badgeColor = "bg-black";
+                    if(p.status === "Pago") badgeColor = "bg-green-600";
+                    if(p.status === "Enviado") badgeColor = "bg-blue-600";
+                    if(p.status === "Concluído") badgeColor = "bg-purple-600";
+                    
                     container.innerHTML += `
                         <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm space-y-3">
                             <div class="flex justify-between items-center border-b pb-2">
@@ -1195,7 +1207,7 @@
         function abrirRastreio() { const mr = document.getElementById('modal-rastreio'); if(mr) mr.classList.remove('hidden'); }
         function fecharRastreio() { const mr = document.getElementById('modal-rastreio'); if(mr) mr.classList.add('hidden'); }
         
-        async function executarRastreio() {
+        async function ejecutarRastreio() {
             const codigo = document.getElementById('codigo-rastreio-input').value.trim().toUpperCase();
             if(!codigo) return;
             const resRastreio = document.getElementById('resultado-rastreio');
@@ -1212,7 +1224,11 @@
                     const rStatus = document.getElementById('rastreio-status');
                     if(rStatus) {
                         rStatus.innerText = p.status;
-                        rStatus.className = p.status === "Pago" ? "bg-green-500 text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full" : "bg-black text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full";
+                        let badgeColor = "bg-black";
+                        if(p.status === "Pago") badgeColor = "bg-green-600";
+                        if(p.status === "Enviado") badgeColor = "bg-blue-600";
+                        if(p.status === "Concluído") badgeColor = "bg-purple-600";
+                        rStatus.className = `${badgeColor} text-white text-[10px] uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full`;
                     }
                     document.getElementById('rastreio-produto').innerText = p.produto_nome;
                     document.getElementById('rastreio-cliente').innerText = p.cliente_nome;
