@@ -231,7 +231,7 @@
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-100 shadow-2xl relative">
             <button onclick="fecharRastreio()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"><i class="fas fa-times"></i></button>
             <div class="text-center space-y-2 mb-6">
-                <h3 class="text-lg font-serif-kalashi font-black uppercase tracking-wider text-gray-900">Rastrear Objeto</h3>
+                <h3 class="text-lg font-serif-kalashi font-black uppercase tracking-wider text-gray-900">Rastrear Pedido</h3>
                 <p class="text-xs text-gray-500">Insira o código identificador para localizar sua compra.</p>
             </div>
             <div class="space-y-4">
@@ -308,7 +308,8 @@
                 <div id="produtos-loading-status" class="text-center py-12 text-xs font-bold uppercase tracking-widest text-gray-400 animate-pulse">
                     <i class="fas fa-sync-alt fa-spin mr-2 text-sm text-black"></i> Sincronizando Catálogo...
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
+                <!-- ID EXPLÍCITO APLICADO PARA EVITAR CONFLITOS DE MAPEAMENTO -->
+                <div id="grid-produtos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
             </main>
         </div>
 
@@ -824,10 +825,9 @@
 
         function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
-        // ENGENHARIA DE PRODUTOS BLINDADA E TOLERANTE A MAIÚSCULAS/MINÚSCULAS
+        // BUSCA DINÂMICA DE PRODUTOS CORRIGIDA
         async function carregarProdutosDoSupabase() {
             const statusLoading = document.getElementById('produtos-loading-status');
-            const grid = document.querySelector('#produtos > div');
             
             try {
                 const urlProdutos = `${SUPABASE_URL}/rest/v1/produtos?order=id.asc`;
@@ -845,7 +845,6 @@
                     if (dadosNuvem && dadosNuvem.length > 0) {
                         produtosDB = {};
                         dadosNuvem.forEach(p => {
-                            // Suporte de fallback inteligente para letras maiúsculas/minúsculas vindas do banco
                             const iconeResolvido = p.icone || p.Icone || "fa-box";
                             const precoResolvido = p.preco || p.Preco || 0;
                             const nomeResolvido = p.nome || p.Nome || "Produto Premium";
@@ -866,7 +865,7 @@
                     produtosDB = { ...produtosBackupLocal };
                 }
             } catch (err) {
-                console.warn("Conexão instável. Aplicando catálogo de redundância local.", err);
+                console.warn("Erro ao ler produtos, aplicando backup local:", err);
                 produtosDB = { ...produtosBackupLocal };
             }
 
@@ -874,8 +873,12 @@
             renderizarVitrine();
         }
 
+        // RE-MAPEADO COM SELETOR DE ID ESPECÍFICO PARA EVITAR CONFLITO NO GRID
         function renderizarVitrine() {
-            const grid = document.querySelector('#produtos > div');
+            const containerStatus = document.getElementById('produtos-loading-status');
+            const grid = document.querySelector('#produtos > div.grid');
+            
+            if (statusLoading) statusLoading.style.display = 'none';
             if(!grid) return; 
             grid.innerHTML = '';
             
