@@ -100,7 +100,7 @@
                 </nav>
             </div>
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center border-t border-gray-100 pt-4">
-                Kalashi Barber v2.4
+                Kalashi Barber v2.5
             </div>
         </div>
     </div>
@@ -339,7 +339,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1">
                             <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">E-mail de Login</label>
-                            <input type="email" id="perf-email" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black bg-gray-50/50">
+                            <input type="email" id="perf-email" required readonly class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none text-gray-400 bg-gray-100 cursor-not-allowed">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Alterar Senha</label>
@@ -610,9 +610,11 @@
             }
 
             try {
-                const urlUpdate = `${SUPABASE_URL}/rest/v1/clientes?id=eq.${usuarioLogado.id}`;
+                // SOLUÇÃO CRÍTICA: Busca e filtra diretamente pelo Email do usuário logado
+                const urlUpdate = `${SUPABASE_URL}/rest/v1/clientes?email=eq.${encodeURIComponent(email)}`;
                 const res = await fetch(urlUpdate, {
                     method: "PATCH",
+                    options: { mode: 'cors' },
                     headers: {
                         "apikey": SUPABASE_KEY,
                         "Authorization": `Bearer ${SUPABASE_KEY}`,
@@ -621,7 +623,6 @@
                     },
                     body: JSON.stringify({ 
                         nome, 
-                        email, 
                         senha, 
                         data_nascimento: dataNascimentoInput, 
                         endereco: enderecoFinal 
@@ -785,7 +786,7 @@
             document.getElementById('btn-login-submit').innerText = "Entrar no Sistema";
         }
 
-        function iniciarFluxoVerificacao(usuario) {
+        function iniciarFluxo Verificacao(usuario) {
             ocultarErroAuth();
             dadosUsuarioTemporario = usuario;
             codigoGeradoMFA = Math.floor(100000 + Math.random() * 900000).toString();
@@ -912,7 +913,6 @@
                     <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="md:col-span-2 space-y-6">
-                            <!-- CAMPO DE ENDEREÇO TOTALMENTE EDITÁVEL E AJUSTÁVEL -->
                             <div class="border border-gray-200 rounded-2xl p-5 space-y-3 bg-white shadow-sm">
                                 <h4 class="text-xs uppercase tracking-widest font-bold text-gray-700"><i class="fas fa-truck mr-1 text-gray-400"></i> Endereço de Entrega</h4>
                                 <textarea id="checkout-endereco-input" rows="3" required class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-black bg-gray-50 font-medium text-gray-800 resize-none">${usuarioLogado.endereco || ""}</textarea>
