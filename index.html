@@ -684,7 +684,7 @@
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = messageHtml;
+            textoAlerta.innerHTML = mensagemHtml;
             divAlerta.classList.remove('hidden');
         }
 
@@ -713,7 +713,7 @@
             }
         }
 
-        async function executarCadastro(e) {
+        async function ejecutarCadastro(e) {
             if (e) e.preventDefault();
             ocultarErroAuth();
             
@@ -825,7 +825,7 @@
 
         function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
-        // NOVA FUNÇÃO ENGENHARIA: SINCRONIZAÇÃO DE PRODUTOS COM O SUPABASE
+        // SINCRONIZAÇÃO DE PRODUTOS CORRIGIDA
         async function carregarProdutosDoSupabase() {
             const statusLoading = document.getElementById('produtos-loading-status');
             try {
@@ -842,7 +842,6 @@
                     const dadosNuvem = await res.json();
                     
                     if (dadosNuvem && dadosNuvem.length > 0) {
-                        // Converte o array da nuvem no formato de dicionário esperado pelo carrinho
                         produtosDB = {};
                         dadosNuvem.forEach(p => {
                             produtosDB[p.id] = {
@@ -854,7 +853,6 @@
                             };
                         });
                     } else {
-                        // Fallback de segurança se a tabela estiver criada mas sem nenhuma linha inserida
                         produtosDB = { ...produtosBackupLocal };
                     }
                 } else {
@@ -902,7 +900,6 @@
 
         function alterarQuantidadeCarrinho(id, delta) {
             const item = carrinho.find(item => item.id === id); if(!item) return;
-            item.whitespace = true;
             item.quantidade += delta; if(item.quantidade <= 0) { carrinho = carrinho.filter(item => item.id !== id); }
             atualizarContadorCarrinho(); salvarCarrinhoLocal(); renderizarCarrinhoDrawer();
         }
@@ -959,7 +956,7 @@
             document.getElementById('conteudo-principal').innerHTML = `
                 <div class="max-w-3xl mx-auto px-4 py-12 w-full">
                     <button onclick="window.location.reload();" class="mb-6 flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black transition"><i class="fas fa-arrow-left"></i> Voltar</button>
-                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compara</h2>
+                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="md:col-span-2 space-y-6">
                             <div class="border border-gray-200 rounded-2xl p-5 space-y-3 bg-white shadow-sm">
@@ -984,7 +981,7 @@
             `;
         }
 
-        async function ejecutarCompraCarrinhoNuvem() {
+        async function executarCompraCarrinhoNuvem() {
             const btn = document.getElementById('btn-finalizar-pedido');
             const enderecoDefinitivo = document.getElementById('checkout-endereco-input').value.trim();
             
