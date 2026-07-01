@@ -43,7 +43,6 @@
             
             <!-- ESQUERDA: LOGO GIGANTE EM DESTAQUE MÁXIMO FLUTUANTE -->
             <div class="flex items-center gap-4 cursor-pointer relative" onclick="window.location.reload();">
-                <!-- Aumentado para w-28 h-28 com posicionamento absoluto para flutuar de forma imponente sobre a barra -->
                 <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center hover:scale-105 transition-transform duration-300 drop-shadow-md shrink-0 bg-white rounded-full p-0.5 border border-gray-100">
                     <svg viewBox="0 0 500 500" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="250" cy="250" r="230" fill="white" />
@@ -101,7 +100,7 @@
                 </nav>
             </div>
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center border-t border-gray-100 pt-4">
-                Kalashi Barber v2.5
+                Kalashi Barber v2.6
             </div>
         </div>
     </div>
@@ -305,6 +304,10 @@
             </section>
             
             <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+                <!-- INDICADOR DE CARREGAMENTO DINÂMICO -->
+                <div id="produtos-loading-status" class="text-center py-12 text-xs font-bold uppercase tracking-widest text-gray-400 animate-pulse">
+                    <i class="fas fa-sync-alt fa-spin mr-2 text-sm text-black"></i> Sincronizando Catálogo...
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
             </main>
         </div>
@@ -409,13 +412,15 @@
         const SUPABASE_URL = "https://trvrjqkowacninpqdiii.supabase.co";
         const SUPABASE_KEY = "sb_publishable_hCjMw5KmZgAI65lyVGSPhg_7RDXmi8X";
 
-        const produtosDB = {
+        // Backup local caso a tabela nova do Supabase esteja completamente vazia
+        const produtosBackupLocal = {
             1: { id: 1, categoria: "Equipamentos", nome: "Máquina de Cortar Cabelo Profissional", preco: 249.90, icone: "fa-scissors" },
             2: { id: 2, categoria: "Estilo", nome: "Pomada Modeladora Efeito Matte", preco: 45.00, icone: "fa-jar" },
             3: { id: 3, categoria: "Cuidados", nome: "Shampoo Premium Barba & Cabelo", preco: 39.90, icone: "fa-soap" },
             4: { id: 4, categoria: "Equipamentos", nome: "Tesoura Fio Laser Profissional", preco: 120.00, icone: "fa-cut" }
         };
 
+        let produtosDB = {}; // Será preenchido dinamicamente via Supabase
         let usuarioLogado = null;
         let carrinho = [];
         let codigoGeradoMFA = null;
@@ -679,7 +684,7 @@
         function mostrarErroAuth(mensagemHtml) {
             const divAlerta = document.getElementById('alerta-auth');
             const textoAlerta = document.getElementById('alerta-auth-texto');
-            textoAlerta.innerHTML = mensagemHtml;
+            textoAlerta.innerHTML = messageHtml;
             divAlerta.classList.remove('hidden');
         }
 
@@ -820,6 +825,50 @@
 
         function executarLogout() { localStorage.removeItem('kalashi_global_session'); usuarioLogado = null; window.location.reload(); }
 
+        // NOVA FUNÇÃO ENGENHARIA: SINCRONIZAÇÃO DE PRODUTOS COM O SUPABASE
+        async function carregarProdutosDoSupabase() {
+            const statusLoading = document.getElementById('produtos-loading-status');
+            try {
+                const urlProdutos = `${SUPABASE_URL}/rest/v1/produtos?order=id.asc`;
+                const res = await fetch(urlProdutos, {
+                    method: "GET",
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (res.ok) {
+                    const dadosNuvem = await res.json();
+                    
+                    if (dadosNuvem && dadosNuvem.length > 0) {
+                        // Converte o array da nuvem no formato de dicionário esperado pelo carrinho
+                        produtosDB = {};
+                        dadosNuvem.forEach(p => {
+                            produtosDB[p.id] = {
+                                id: p.id,
+                                categoria: p.categoria,
+                                nome: p.nome,
+                                preco: parseFloat(p.preco),
+                                icone: p.icone
+                            };
+                        });
+                    } else {
+                        // Fallback de segurança se a tabela estiver criada mas sem nenhuma linha inserida
+                        produtosDB = { ...produtosBackupLocal };
+                    }
+                } else {
+                    produtosDB = { ...produtosBackupLocal };
+                }
+            } catch (err) {
+                console.warn("Erro ao ler produtos do Supabase, aplicando backup estático local:", err);
+                produtosDB = { ...produtosBackupLocal };
+            }
+
+            if (statusLoading) statusLoading.classList.add('hidden');
+            renderizarVitrine();
+        }
+
         function renderizarVitrine() {
             const grid = document.querySelector('#produtos > div');
             if(!grid) return; grid.innerHTML = '';
@@ -853,6 +902,7 @@
 
         function alterarQuantidadeCarrinho(id, delta) {
             const item = carrinho.find(item => item.id === id); if(!item) return;
+            item.whitespace = true;
             item.quantidade += delta; if(item.quantidade <= 0) { carrinho = carrinho.filter(item => item.id !== id); }
             atualizarContadorCarrinho(); salvarCarrinhoLocal(); renderizarCarrinhoDrawer();
         }
@@ -909,7 +959,7 @@
             document.getElementById('conteudo-principal').innerHTML = `
                 <div class="max-w-3xl mx-auto px-4 py-12 w-full">
                     <button onclick="window.location.reload();" class="mb-6 flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-500 hover:text-black transition"><i class="fas fa-arrow-left"></i> Voltar</button>
-                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compra</h2>
+                    <h2 class="text-2xl font-serif-kalashi font-black uppercase tracking-wider text-gray-900 mb-6">Finalizar Compara</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="md:col-span-2 space-y-6">
                             <div class="border border-gray-200 rounded-2xl p-5 space-y-3 bg-white shadow-sm">
@@ -934,7 +984,7 @@
             `;
         }
 
-        async function executarCompraCarrinhoNuvem() {
+        async function ejecutarCompraCarrinhoNuvem() {
             const btn = document.getElementById('btn-finalizar-pedido');
             const enderecoDefinitivo = document.getElementById('checkout-endereco-input').value.trim();
             
@@ -1016,7 +1066,8 @@
         }
 
         checarSessao();
-        renderizarVitrine();
+        // Inicializa a busca de produtos diretamente na nuvem
+        carregarProdutosDoSupabase();
     </script>
 </body>
 </html>
